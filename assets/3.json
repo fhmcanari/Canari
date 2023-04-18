@@ -1,0 +1,12 @@
+{
+    "admin":[
+        {
+          "name":"hassan",
+          "users": ["najib","hamza","hamid"]
+        },
+        {
+          "name": "mohsin",
+          "users": ["mustaph","ayoub","rachid"]
+        }
+    ]
+}

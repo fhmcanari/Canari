@@ -1,0 +1,125 @@
+{
+  "restaurant": [
+    {
+      "id": 1,
+      "name": "Dat pizza dough",
+      "slug": "Dat_pizza_dough",
+      "cuisines": [
+        "Amiracan"
+      ],
+      "brand_logo": "https://hsaa.hsobjects.com/h/restaurants/logos/000/025/481/fbdf4555507d37cedfa28b293bb9ab2f-small.jpg",
+      "cover": "https://hsaa.hsobjects.com/h/restaurants/android_cover_photos/000/025/481/a78a6480ebab276e4f4791ef83407b99-large.jpg",
+      "deliveryTime": "25",
+      "rate": 3.3,
+      "delivery_price": 0,
+      "offers": [
+        {
+          "id": 1,
+          "percentage": "-40%",
+          "offer": " 40% off entire menu"
+        },
+        {
+          "id": 2,
+          "percentage": "-10%",
+          "offer": " -10% first order"
+        }
+      ],
+      "statu": "open",
+      "menu": [
+        {
+          "name": "PIZZAS",
+          "dishes": [
+            {
+              "name": "Focaccia",
+              "price": 20.00,
+              "descripton": "Sauce tomate, mozzarella, origan, huile d'olive",
+              "img": "https://rs-menus-api.roocdn.com/images/5dfdb43c-5984-4ae3-b285-911f10435596/image.jpeg?width=288&height=288&auto=webp&format=jpg&fit=crop&v="
+            },
+            {
+              "name": "Napoli",
+              "price": 45.00,
+              "descripton": "Sauce tomate, mozzarella, anchois, origan, huile d'olive",
+              "img": "https://rs-menus-api.roocdn.com/images/5dfdb43c-5984-4ae3-b285-911f10435596/image.jpeg?width=288&height=288&auto=webp&format=jpg&fit=crop&v="
+            }
+          ]
+        },
+        {
+          "name": "VIANDES ",
+          "dishes": [
+            {
+              "name": "Scaloppine Al Limone",
+              "price": 20.00,
+              "descripton": "Sauce tomate, mozzarella, origan, huile d'olive",
+              "img": "https://rs-menus-api.roocdn.com/images/314e8703-cfb5-4c1e-828d-fb45234a5ea3/image.jpeg?width=288&height=288&auto=webp&format=jpg&fit=crop&v="
+            },
+            {
+              "name": "Emincé de Filet de Bœuf",
+              "price": 45.00,
+              "descripton": "Sauce tomate, mozzarella, anchois, origan, huile d'olive",
+              "img": "https://rs-menus-api.roocdn.com/images/cfa8e327-1a8c-4bb0-80f2-ab2559bf7694/image.jpeg?width=288&height=288&auto=webp&format=jpg&fit=crop&v="
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "So Souffle",
+      "slug": "So_Souffle",
+      "cuisines": [
+        "Beverages",
+        "Coffee",
+        "Desserts"
+      ],
+      "brand_logo": "https://hsaa.hsobjects.com/h/restaurants/logos/000/002/538/d0e3500c8e9aeaf1be3788360520502e-small.png",
+      "cover": "https://hsaa.hsobjects.com/h/restaurants/android_cover_photos/000/002/538/7928a4cdc72654063f04ac3137fcb89e-large.jpg",
+      "deliveryTime": "30",
+      "rate": 3.6,
+      "delivery_price": 5,
+      "offers": [
+        {
+          "id": 1,
+          "percentage": "-40%",
+          "offer": " 40% off entire menu"
+        }
+      ],
+      "statu": "open",
+      "menu": [
+        {
+          "name": "PIZZAS",
+          "dishes": [
+            {
+              "name": "Focaccia",
+              "price": 20.00,
+              "descripton": "Sauce tomate, mozzarella, origan, huile d'olive",
+              "img": "https://rs-menus-api.roocdn.com/images/5dfdb43c-5984-4ae3-b285-911f10435596/image.jpeg?width=288&height=288&auto=webp&format=jpg&fit=crop&v="
+            },
+            {
+              "name": "Napoli",
+              "price": 45.00,
+              "descripton": "Sauce tomate, mozzarella, anchois, origan, huile d'olive",
+              "img": "https://rs-menus-api.roocdn.com/images/5dfdb43c-5984-4ae3-b285-911f10435596/image.jpeg?width=288&height=288&auto=webp&format=jpg&fit=crop&v="
+            }
+          ]
+        },
+        {
+          "name": "VIANDES ",
+          "dishes": [
+            {
+              "name": "Emincé de Poulet",
+              "price": 34.00,
+              "descripton": "Sauce tomate, mozzarella, jambon de dinde, huile d'olives, origan",
+              "img": "https://rs-menus-api.roocdn.com/images/db3f358f-7b2b-4ee4-bc1e-6bee9238beb7/image.jpeg?width=288&height=288&auto=webp&format=jpg&fit=crop&v="
+            },
+            {
+              "name": "Mare E Monti",
+              "price": 20.00,
+              "descripton": "Sauce tomate, mozzarella, champignons, crevettes",
+              "img": "https://rs-menus-api.roocdn.com/images/bbdceaea-37a0-4d0e-a3ff-0d6076319749/image.jpeg?width=288&height=288&auto=webp&format=jpg&fit=crop&v="
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
