@@ -12,7 +12,8 @@ class ResturantList extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-
+    String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+     
     return Padding(
       padding: const EdgeInsets.only(left: 2,top: 0,bottom: 10),
       child: InkWell(
@@ -71,19 +72,39 @@ class ResturantList extends StatelessWidget {
              mainAxisAlignment: MainAxisAlignment.center,
              children: [
                Row(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                  children: [
-                   Padding(
-                     padding: const EdgeInsets.only(right: 10),
-                     child: Text(
-                       '${Restaurant['name']}',
-                        style:TextStyle(
-                           fontWeight: FontWeight.normal,
-                           color: Color(0xFF000000),
-                           fontSize: 15),
+                 Padding(
+                 padding: const EdgeInsets.only(right: 10),
+                 child: Text(
+                   '${Restaurant['name']}',
+                    style:TextStyle(
+                       fontWeight: FontWeight.normal,
+                       color: Color(0xFF000000),
+                       fontSize: 15),
+                 ),
+               ),
+                   if(Restaurant['tags'].length>0)
+                   Container(
+                     decoration: BoxDecoration(
+                       borderRadius: BorderRadius.circular(5),
+                       color: Color(0xfffafafa),
                      ),
-                   ),
+
+                     child: Padding(
+                       padding: const EdgeInsets.only(top: 4,left: 8,right: 8,bottom: 6),
+                       child: Text('جديد',
+                         style:TextStyle(
+                           color:Color(0xffff7144),
+                           fontSize: 13,
+                           fontWeight: FontWeight.bold
+                       ),),
+                     ),
+                   )
                  ],
                ),
+
                height(3),
                Padding(
                  padding: const EdgeInsets.only(right: 10),

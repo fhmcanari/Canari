@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopapp/Layout/shopcubit/shopcubit.dart';
@@ -46,6 +47,23 @@ class RestaurantPage extends StatefulWidget {
 }
 
     class _RestaurantPageState extends State<RestaurantPage> {
+      bool ServiceStatus;
+      Future<bool>serviceStatus() async {
+        RemoteConfig remoteConfig = RemoteConfig.instance;
+        remoteConfig.setConfigSettings(RemoteConfigSettings(
+            fetchTimeout: Duration(seconds: 60),
+            minimumFetchInterval: Duration(seconds: 1)
+        ));
+        await remoteConfig.fetchAndActivate();
+        bool remoteConfigVersion = remoteConfig.getBool('serviceStatus');
+        ServiceStatus = remoteConfigVersion;
+        setState(() {
+
+        });
+
+        return remoteConfigVersion;
+
+      }
     int selectCategoryIndex = 0;
     bool isScroller = false;
     final scrollController = ScrollController();
@@ -62,12 +80,12 @@ class RestaurantPage extends StatefulWidget {
     final GlobalKey<FormState> containerKey = GlobalKey<FormState>();
     @override
     void initState() {
+      serviceStatus();
       super.initState();
     }
 
     @override
     Widget build(BuildContext context) {
-
       String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
       double latitud = Cachehelper.getData(key: "latitude");
       String MyLocation = Cachehelper.getData(key: "myLocation");
@@ -80,6 +98,7 @@ class RestaurantPage extends StatefulWidget {
         child: BlocConsumer<ShopCubit, ShopStates>(
           listener: (context, state) {},
           builder: (context, state) {
+
             var cubit = ShopCubit.get(context);
 
             if(cubit.store!=null){
@@ -121,16 +140,15 @@ class RestaurantPage extends StatefulWidget {
 
 
 
-            // if (state is AddtoCartSucessfulState) {
-            //    Navigator.pop(context, '${state.totalprice}');
-            // }
+
       return SafeArea(
         child: Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(
               backgroundColor: Colors.white,
-              bottomNavigationBar: state is! GetResturantPageDataLoadingState ? cubit.getCartItem() != 0
-                      ? Container(
+              bottomNavigationBar:
+              state is! GetResturantPageDataLoadingState ? cubit.getCartItem() != 0
+                      ?  dataService.itemsCart[0]['productStoreId']==widget.id? Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
                               boxShadow: [
@@ -146,10 +164,22 @@ class RestaurantPage extends StatefulWidget {
                                 right: 15, left: 15, bottom: 10, top: 10),
                             child: GestureDetector(
                               onTap: () async {
+                                if(!ServiceStatus){
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(
+                                      " أود إخباركم أن خدمتنا لم تبدأ بعد. نحن نعمل بجد لنقدم لك أفضل تجربة ممكنة وسنعلمك بمجرد استعدادنا للانطلاق. شكرا لصبرك و تفهمك",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    duration: Duration(milliseconds: 5000),
+                                  ));
+                                  dataService.itemsCart.clear();
+                                  setState(() {
 
-
-                                print(dataService.itemsCart[0]['storeStatus']);
-                                // var contain = dataService.itemsCart.where((element) => element['storeStatus'] != false).toList();
+                                  });
+                                }else{
                                 if (!dataService.itemsCart[0]['storeStatus']) {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(
@@ -161,10 +191,17 @@ class RestaurantPage extends StatefulWidget {
                                     ),
                                     duration: Duration(milliseconds: 2000),
                                   ));
+                                  dataService.itemsCart.clear();
+                                  setState(() {
+
+                                  });
                                 } else {
                                   if (latitud != null) {
+                                    print(cubit.store['delivery_price']);
                                     var totalPrice = await navigateTo(
-                                        context, CheckoutPage());
+                                        context,CheckoutPage(
+                                      delivery_price: widget.price_delivery,
+                                    ));
                                     setState(() {
                                       totalPrice = price;
                                     });
@@ -180,7 +217,7 @@ class RestaurantPage extends StatefulWidget {
                                       }
                                     });
                                   }
-                                }
+                                }}
                               },
                         child: Container(
                           height: 50,
@@ -248,7 +285,9 @@ class RestaurantPage extends StatefulWidget {
                         )
                   : SizedBox(
                       height: 0,
-                    ),
+                    ):SizedBox(
+                     height: 0,
+                     ),
               body: state is! GetResturantPageDataLoadingState
                   ? CustomScrollView(
                       controller: scrollController,
@@ -317,8 +356,10 @@ class RestaurantPage extends StatefulWidget {
                             padding: EdgeInsets.only(left: 16, right: 5),
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.pop(
-                                    context, '${cubit.getTotalPrice()}');
+                                Navigator.pop(context, '${cubit.getTotalPrice()}');
+                                setState(() {
+
+                                });
                               },
                               child: CircleAvatar(
                                   child: Icon(Icons.arrow_back,
@@ -332,6 +373,7 @@ class RestaurantPage extends StatefulWidget {
                         SliverPersistentHeader(
                           pinned: true,
                           delegate: ResturantCategoriesItem(
+                              isShow :isShow,
                               cubit: cubit,
                               selectedIndex: selectCategoryIndex,
                               onchanged: (int index) {
@@ -387,6 +429,23 @@ class RestaurantPage extends StatefulWidget {
                     color: Colors.grey[100],
                     child: Column(
                       children: [
+
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color: Colors.grey.withOpacity(0.5),
+                        //         spreadRadius: 2,
+                        //         blurRadius: 5,
+                        //         offset: Offset(1, 8), // changes position of shadow
+                        //       ),
+                        //     ],
+                        //   ),
+                        //   child: ElevatedButton(
+                        //     onPressed: () {},
+                        //     child: Text('My Button'),
+                        //   ),
+                        // ),
                         ListView.builder(
                             physics: NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
@@ -411,8 +470,13 @@ class RestaurantPage extends StatefulWidget {
                                         ),
                                       ),
                                       height(10),
-                                Column(
+                                      Column(
                                   children: [
+
+
+
+
+
                                 ListView.builder(
                                     shrinkWrap: true,
                                     physics: NeverScrollableScrollPhysics(),
@@ -454,14 +518,6 @@ class RestaurantPage extends StatefulWidget {
                                                     storeStatus = cubit.store['is_open'];
                                                     cubit.qty = 1;
                                                     return buildProduct(product,cubit,StoreName,StoreId,deliveryPrice,storeStatus);
-
-                                                    //   ProductDetail(
-                                                    //   id: StoreId,
-                                                    //   StoreName: StoreName,
-                                                    //   DeliveryPrice: deliveryPrice,
-                                                    //   dishes: product,
-                                                    //   storeStatus: storeStatus,
-                                                    // );
                                                   });
                                               setState(() {
                                                 totalPrice = price;
@@ -718,20 +774,15 @@ class RestaurantPage extends StatefulWidget {
              height: 75,
              child: Padding(
                padding: const EdgeInsets.only(right: 15,left: 15,bottom: 10,top: 10),
-               child:
-               GestureDetector(
+               child: GestureDetector(
                  onTap: (){
                    StoreName = StoreName;
                    StoreId = StoreId;
-                   print(widget.id);
                    deliveryPrice = deliveryPrice;
                    cubit.addToCart(product:product,Qty:cubit.qty,productStoreId:StoreId,attributes:[],storeStats: storeStatus);
                    if(cubit.isinCart){
-                     Navigator.pop(
-                         context, '${cubit.getTotalPrice()}');
-
+                     Navigator.pop(context, '${cubit.getTotalPrice()}');
                    }
-
                    if(cubit.isinCart==false){
                      dataService.itemsCart.clear();
                      dataService.productsCart.clear();

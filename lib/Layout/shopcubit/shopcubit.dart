@@ -65,7 +65,7 @@ class ShopCubit extends Cubit<ShopStates> {
 
   getStoreData({String slug,}) {
     emit(GetResturantPageDataLoadingState());
-    getStoreApi(slug: slug).then((value) {
+    getStoreApi(slug: slug,latitude:latitude ,longitude: longitude).then((value) {
     isloading = true;
     store = value;
     storeLatitude = store['latitude'];
@@ -232,7 +232,7 @@ class ShopCubit extends Cubit<ShopStates> {
   Future CheckoutApi(payload)async{
     isloading = false;
     String access_token = Cachehelper.getData(key: "token");
-    printFullText(payload.toString());
+    printFullText('checkout :${payload}');
     emit(CheckoutLoadingState());
     http.Response response = await http.post(
         Uri.parse('https://www.api.canariapp.com/v1/client/orders'),
@@ -308,7 +308,7 @@ class ShopCubit extends Cubit<ShopStates> {
 
 
   Future RegisterApi(data) async{
-    print(data);
+    print('register :${data}');
     emit(RegisterLoadingStates());
     http.Response response = await http.post(
         Uri.parse('https://www.api.canariapp.com/v1/client/register'),
@@ -345,14 +345,14 @@ class ShopCubit extends Cubit<ShopStates> {
       url: 'https://www.api.canariapp.com/v1/client/login',
     ).then((value) {
       printFullText(value.data.toString());
-      // var responsebody = jsonDecode(value.data);
-       Cachehelper.sharedPreferences.setString("deviceId",value.data['device_id'].toString());
-       Cachehelper.sharedPreferences.setString("token",value.data['token']);
-      // print('============================================================');
-      // printFullText(responsebody.toString());
-      Cachehelper.sharedPreferences.setString("first_name",value.data['client']['first_name']);
-      Cachehelper.sharedPreferences.setString("last_name",value.data['client']['last_name']);
-      Cachehelper.sharedPreferences.setString("phone",value.data['client']['phone']);
+      //  // var responsebody = jsonDecode(value.data);
+      //  Cachehelper.sharedPreferences.setString("deviceId",value.data['device_id'].toString());
+      //  Cachehelper.sharedPreferences.setString("token",value.data['token']);
+      // // print('============================================================');
+      // // printFullText(responsebody.toString());
+      // Cachehelper.sharedPreferences.setString("first_name",value.data['client']['first_name']);
+      // Cachehelper.sharedPreferences.setString("last_name",value.data['client']['last_name']);
+      // Cachehelper.sharedPreferences.setString("phone",value.data['client']['phone']);
       emit(LoginSucessfulState(value.data));
     }).catchError((error) {
       printFullText(error.toString());

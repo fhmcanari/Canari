@@ -13,3 +13,4 @@ bool storeStatus;
 int StoreId;
 String type;
 String sessionToken = "122344";
+

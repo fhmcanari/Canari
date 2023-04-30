@@ -42,15 +42,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  final Connectivity _connectivity = Connectivity();
-  ConnectivityResult _connectivityResult = ConnectivityResult.none;
- 
-
-  Future<void>_updateConnectionStatus(ConnectivityResult result)async{
-    setState(() {
-      _connectivityResult = result;
-    });
-  }
+  // final Connectivity _connectivity = Connectivity();
+  // ConnectivityResult _connectivityResult = ConnectivityResult.none;
+  //
+  //
+  // Future<void>_updateConnectionStatus(ConnectivityResult result)async{
+  //   setState(() {
+  //     _connectivityResult = result;
+  //   });
+  // }
 
 
   Future getPostion()async{
@@ -82,12 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 
-   // List Popular_Filters = [
-   //   "توصيل مجاني",
-   //   "أعلى تقييم",
-   //   "سلمت بواسطتنا",
-   //   "عروض",
-   // ];
+
 
    HashSet selectFilters = new HashSet();
 
@@ -96,7 +91,8 @@ class _MyHomePageState extends State<MyHomePage> {
     String fcmtoken='';
    @override
   void initState(){
-     _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+     FirebaseMessaging.instance.getInitialMessage();
+
      getPostion();
      _handleLocationPermission();
      fbm.getToken().then((token){
@@ -106,13 +102,13 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
    
-   bool islist = false;
+   bool islist = true;
    String text ='';
    Map json = {};
    var price;
    @override
   Widget build(BuildContext context) {
-    FirebaseMessaging.instance.getInitialMessage();
+
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     // FirebaseMessaging.onMessage.listen((message){
@@ -175,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
           return Directionality(
             textDirection: ui.TextDirection.rtl,
             child: Scaffold(
-              appBar:appbar(context,myLocation: MyLocation==null?'select Location':MyLocation,icon: Icons.person,
+              appBar:appbar(context,myLocation: MyLocation==null?'اختر موقع':MyLocation,icon: Icons.person,
                   onback: (){
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context)=>SelectLocation()), (route) => false);
@@ -186,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.white,
               floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
               floatingActionButton:cubit.isloading?cubit.myorders!=null && cubit.myorders.length>0 && cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
-                  .where((e)=>e['status']!='delivered' && e['status']!='non-accepted').toList().length!=0?FloatingActionButton.extended(
+                  .where((e)=>e['status']!='delivered' && e['status']!='non-accepted'&& e['status']!='failed').toList().length!=0?FloatingActionButton.extended(
                  extendedPadding: EdgeInsetsDirectional.only(start: 7.0, end: 7.0) ,
                   backgroundColor: Colors.white,
                   shape: BeveledRectangleBorder(
@@ -194,9 +190,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   onPressed: (){
                     if(cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
-                        .where((e)=>e['status']!='delivered' && e['status']!='non-accepted').toList().length==1){
+                        .where((e)=>e['status']!='delivered' && e['status']!='non-accepted'&& e['status']!='failed').toList().length==1){
                    cubit.Myorder(cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
-                       .where((e)=>e['status']!='delivered' && e['status']!='non-accepted').toList()[0]['order_ref']);
+                       .where((e)=>e['status']!='delivered' && e['status']!='non-accepted'&& e['status']!='failed').toList()[0]['order_ref']);
                    cubit.isload = false;
                     }else{
                      navigateTo(context, Myorder());
@@ -212,15 +208,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
-                                  .where((e)=>e['status']!='delivered' && e['status']!='non-accepted').toList().length>0? Container(
+                                  .where((e)=>e['status']!='delivered' && e['status']!='non-accepted'&& e['status']!='failed').toList().length>0? Container(
                                   height: 35,width: 35,
                                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(5),color:Color.fromARGB(255, 253, 106, 95)),
                                   child:cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
-                                      .where((e)=>e['status']!='delivered' && e['status']!='non-accepted').toList().length==1?ClipRRect(
+                                      .where((e)=>e['status']!='delivered' && e['status']!='non-accepted'&& e['status']!='failed').toList().length==1?ClipRRect(
                                       borderRadius: BorderRadius.circular(5),
                                       child:CachedNetworkImage(
                                           imageUrl: '${cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
-                                              .where((e)=>e['status']!='delivered' && e['status']!='non-accepted').toList()[0]['store']['logo']}',
+                                              .where((e)=>e['status']!='delivered' && e['status']!='non-accepted'&& e['status']!='failed').toList()[0]['store']['logo']}',
                                           placeholder: (context, url) =>
                                               Image.asset('assets/placeholder.png',fit: BoxFit.cover,),
                                           errorWidget: (context, url, error) => const Icon(Icons.error),
@@ -249,15 +245,19 @@ class _MyHomePageState extends State<MyHomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   height(2),
-                                  Text('In Progress',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11.5,color:Color(0xFF25d366)),),
-                                  height(3),
+                                   if(cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
+                                       .where((e)=>e['status']!='delivered' && e['status']!='failed').toList().length==1)
+                                   Text(status(cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
+                                       .where((e)=>e['status']!='delivered' && e['status']!='failed').toList()[0]['status']),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11.5,color:Color(0xFF25d366)),),
+                                  cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
+                                      .where((e)=>e['status']!='delivered' && e['status']!='failed').toList().length==1?height(2):height(8),
                                   cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
                                       .where((e)=>e['status']!='delivered' && e['status']!='failed').toList().length>0?Column(
                                     children: [
                                       cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
                                           .where((e)=>e['status']!='delivered' && e['status']!='failed').toList().length==1?Text('${cubit.myorders.where((element) => DateFormat('dd/MM/yyyy').format(DateTime.parse(element['created_at']))==DateFormat('dd/MM/yyyy').format(DateTime.now())).toList()
                                           .where((e)=>e['status']!='delivered' && e['status']!='failed').toList()[0]['store']['name']}',style: TextStyle(fontWeight: FontWeight.w500,fontSize: 11.5,color:Colors.black),)
-                                          :Text('رؤية طلب',style: TextStyle(fontWeight: FontWeight.w500,fontSize: 11.5,color:Colors.black),),
+                                          :Text('رؤية طلبات',style: TextStyle(fontWeight: FontWeight.w500,fontSize: 11.5,color:Colors.black),),
                                     ],
                                   ):height(0),
                                 ],
@@ -271,7 +271,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   )
               ):height(0):height(0),
 
-              body:_connectivityResult.name == 'none'?SingleChildScrollView(
+              body:SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -318,7 +318,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     height(10),
                     Resturant(cubit: cubit),
-
+                    if(cubit.stores.where((element) => element['delivery_price']==0).toList().length>0)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -326,8 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                     height(10),
-                    Resturant(cubit: cubit,status:"freedelivery"),
-
+                    cubit.stores.where((element) => element['delivery_price']==0).toList().length>0? Resturant(cubit: cubit,status:"freedelivery"):height(0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -419,6 +418,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ListView.builder(
                     shrinkWrap: true,
                       itemCount: 5,
+
                       itemBuilder: (context,index){
                      return Padding(
                        padding: const EdgeInsets.only(left: 20,right: 20,bottom: 10),
@@ -558,7 +558,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   ],
                 ),
-              ):Text('no internet'),
+              ),
             ),
           );
         },
@@ -640,6 +640,34 @@ class _MyHomePageState extends State<MyHomePage> {
                                           body:buildFilter(selectCategories:selectFilters,cubit: cubit),
                                         ));
   }
+
+  status(String status) {
+    if (status == 'pending') {
+      return 'قيد الانتظار';
+    }
+    if (status == 'confirmation on process') {
+      return 'جاري التأكيد';
+    }
+    if(status == 'on process'){
+      return 'المطعم يحضر طلبك';
+    }
+    if(status == 'ready'){
+      return 'طلبك جاهز للاستلام الآن';
+    }
+    if(status == 'delivery process'){
+      return 'جاري توصيل طلبك';
+    }
+    if(status == 'delivered'){
+      return 'تم توصيل طلبيتك';
+    }
+    if(status == 'non-accepted'){
+      return 'تم رفض طلبيتك';
+    }else{
+      return 'تم إلغاء طلبيتك';
+    }
+
+  }
+
   buildFilter({HashSet selectCategories,ShopCubit cubit}){
     return Directionality(
       textDirection: ui.TextDirection.rtl,

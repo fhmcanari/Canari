@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
+import 'package:shopapp/modules/pages/privacy.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopapp/Layout/shopcubit/shopstate.dart';
@@ -32,6 +33,7 @@ class _ProfileState extends State<Profile> {
   final GlobalKey<FormState> fromkey = GlobalKey<FormState>();
   var FirstnameController = TextEditingController();
   var LastnameController = TextEditingController();
+  var PhoneController = TextEditingController();
   bool islogin = false;
   bool isupdate = false;
   bool iswebview = false;
@@ -43,28 +45,18 @@ class _ProfileState extends State<Profile> {
     print(fcmtoken);
     String firstname = Cachehelper.getData(key: "first_name");
     String lastname = Cachehelper.getData(key: "last_name");
-    print(firstname);
-    print(lastname);
+    String phone = Cachehelper.getData(key: "phone");
+
 
     return BlocProvider(
       create: (context)=>ShopCubit(),
       child:
       BlocConsumer<ShopCubit,ShopStates>(
-        listener: (context,state){
-
-          // if(state is LoginSucessfulState){
-          //   if(state.data['message']=='Sign In Successful'){
-          //     setState(() {
-          //       isupdate = false;
-          //       Navigator.of(context).pop();
-          //       Cachehelper.sharedPreferences.setString("first_name",state.data['client']['first_name']);
-          //       Cachehelper.sharedPreferences.setString("last_name",state.data['client']['last_name']);
-          //       Cachehelper.sharedPreferences.setString("phone",state.data['client']['phone']);
-          //     });
-          //   }
-          // }
-        },
+        listener: (context,state){},
         builder: (context,state){
+          print(phone);
+          FirstnameController.text = firstname;
+          LastnameController.text = lastname;
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
@@ -148,37 +140,18 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
 
-                      // height(30),
-                      // Row(
-                      //   children: [
-                      //     Icon(Icons.notifications_none_outlined),
-                      //     width(10),
-                      //     Text('إشعارات',style: TextStyle(fontWeight: FontWeight.bold),)
-                      //   ],
-                      // ),
-                      // height(30),
-                      // Row(
-                      //   children: [
-                      //     Icon(Icons.settings),
-                      //     width(10),
-                      //     Text('تغيير اللغة',style: TextStyle(fontWeight: FontWeight.bold),)
-                      //   ],
-                      // ),
-                      // height(30),
-                      // Row(
-                      //   children: [
-                      //     Icon(Icons.info_outline),
-                      //     width(10),
-                      //     Text('معلومات عنا',style: TextStyle(fontWeight: FontWeight.bold),)
-                      //   ],
-                      // ),
                       height(30),
-                      Row(
-                        children: [
-                          Icon(Icons.privacy_tip_outlined),
-                          width(10),
-                          Text('خصوصية',style: TextStyle(fontWeight: FontWeight.bold),)
-                        ],
+                      GestureDetector(
+                        onTap: (){
+                          navigateTo(context, Privacy());
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.privacy_tip_outlined),
+                            width(10),
+                            Text('خصوصية',style: TextStyle(fontWeight: FontWeight.bold),)
+                          ],
+                        ),
                       ),
                       height(25),
                       GestureDetector(
@@ -186,6 +159,8 @@ class _ProfileState extends State<Profile> {
                         Cachehelper.removeData(key: 'token');
                         Cachehelper.removeData(key: 'first_name');
                         Cachehelper.removeData(key: 'last_name');
+                        Cachehelper.removeData(key: 'phone');
+                        Cachehelper.removeData(key: 'deviceId');
                         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MyHomePage(
                           latitude: latitude,
                           longitude: longitude,
@@ -225,7 +200,6 @@ class _ProfileState extends State<Profile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,6 +233,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ):height(0),
                               height(25),
+                              isupdate==false? 
                               Padding(
                                 padding: const EdgeInsets.only(left: 20, right: 20),
                                 child: Row(
@@ -312,6 +287,7 @@ class _ProfileState extends State<Profile> {
                                     Expanded(
                                       flex: 3,
                                       child: buildTextFiled(
+                                        controller: PhoneController,
                                           keyboardType: TextInputType.number,
                                           hintText: 'رقم الهاتف',
                                           valid: 'رقم الهاتف',
@@ -319,18 +295,16 @@ class _ProfileState extends State<Profile> {
                                             if (number.length == 9) {
                                               phoneNumber = "${phoneCode}${number}";
                                             } else {
-                                              final replaced = number.replaceFirst(
-                                                  RegExp('0'), '');
+                                              final replaced = number.replaceFirst(RegExp('0'), '');
                                               phoneNumber = "${phoneCode}${replaced}";
-                                              print(phoneNumber);
                                             }
                                           }
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
-                              height(25),
+                              ):height(0),
+                              isupdate==false?height(25):height(0),
                               Padding(
                                 padding: const EdgeInsets.only(left: 20, right: 20),
                                 child: GestureDetector(
@@ -341,11 +315,15 @@ class _ProfileState extends State<Profile> {
                                         setState(() {
                                           isloading = false;
                                         });
-
+                                        print({
+                                          "first_name":FirstnameController.text,
+                                          "last_name":LastnameController.text,
+                                          "phone":"${phone}",
+                                        });
                                         ShopCubit.get(context).UpdateProfile({
                                           "first_name":FirstnameController.text,
                                           "last_name":LastnameController.text,
-                                          "phone":"${phoneNumber}",
+                                          "phone":"${phone}",
                                         }).then((value){
                                           setState(() {});
                                           isupdate = false;
@@ -435,6 +413,12 @@ class _ProfileState extends State<Profile> {
                         onMessageReceived: (JavascriptMessage message) async {
                           Map<String, dynamic> data = jsonDecode(message.message);
                           print(data);
+                          if(data['action']=='CHANGE_NUMBER'){
+                            iswebview = false;
+                            setState(() {
+
+                            });
+                          }
                           if(data['action'] == 'OTP_SUCCESS'){
                            if(islogin){
                            final authcredential = await FirebaseAuth.instance.signInAnonymously();
@@ -466,7 +450,6 @@ class _ProfileState extends State<Profile> {
                                 });
                               }).catchError((error){
                                 setState(() {
-                                  printFullText(error.toString());
                                   Fluttertoast.showToast(
                                       msg: "ليس لديك حساب قم بانشاء واحد",
                                       toastLength: Toast.LENGTH_SHORT,
@@ -476,6 +459,8 @@ class _ProfileState extends State<Profile> {
                                       textColor: Colors.white,
                                       fontSize: 16.0
                                   );
+                                  isloading =true;
+                                  islogin = false;
                                   iswebview = false;
                                 });
                               });
@@ -489,29 +474,47 @@ class _ProfileState extends State<Profile> {
                                setState(() {
                                  isloading = false;
                                });
-                               if (authcredential.user != null) {
-                                 fbm.getToken().then((token){
-                                   print(token);
+                               if(authcredential.user!=null){
+                                 fbm.getToken().then((token)async{
                                    fcmtoken = token;
-                                   ShopCubit.get(context).RegisterApi({
-                                     "first_name":FirstnameController.text,
-                                     "last_name":LastnameController.text,
-                                     "phone":"${phoneNumber}",
-                                     "device":{
-                                       "token_firebase":"${fcmtoken}",
-                                       "device_id":"z0f33s43p4",
-                                       "device_name":"iphone",
-                                       "ip_address":"192.168.1.1",
-                                       "mac_address":"192.168.1.1"
-                                     }
-                                   }).then((value) {
-                                     Navigator.of(context).pop();
-                                   });
-                                   Cachehelper.sharedPreferences.setString("fcmtoken",token).then((value) {
-                                     print('token fcm is saved');
-
+                                   await DioHelper.postData(
+                                     data:{
+                                       "first_name":FirstnameController.text,
+                                       "last_name":LastnameController.text,
+                                       "phone":"${phoneNumber}",
+                                       "device":{
+                                         "token_firebase":"${fcmtoken}",
+                                         "device_id":"z0f33s43p4",
+                                         "device_name":"iphone",
+                                         "ip_address":"192.168.1.1",
+                                         "mac_address":"192.168.1.1"
+                                       }
+                                     },
+                                     url: 'https://www.api.canariapp.com/v1/client/register',
+                                   ).then((value) {
+                                     printFullText(value.data.toString());
+                                     Cachehelper.sharedPreferences.setString("deviceId",value.data['device_id'].toString());
+                                     Cachehelper.sharedPreferences.setString("token",value.data['token']);
+                                     Cachehelper.sharedPreferences.setString("first_name",value.data['client']['first_name']);
+                                     Cachehelper.sharedPreferences.setString("last_name",value.data['client']['last_name']);
+                                     Cachehelper.sharedPreferences.setString("phone",value.data['client']['phone']);
                                      setState(() {
-                                       isloading = true;
+                                       Navigator.of(context).pop();
+                                     });
+                                   }).catchError((error){
+                                     setState(() {
+                                       Fluttertoast.showToast(
+                                           msg: "لديك حساب قم تسجيل الدخول",
+                                           toastLength: Toast.LENGTH_SHORT,
+                                           gravity: ToastGravity.BOTTOM,
+                                           webShowClose:false,
+                                           backgroundColor: AppColor,
+                                           textColor: Colors.white,
+                                           fontSize: 16.0
+                                       );
+                                       isloading =true;
+                                       islogin = true;
+                                       iswebview = false;
                                      });
                                    });
                                  });

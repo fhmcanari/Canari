@@ -52,7 +52,7 @@ class _SearchState extends State<Search> {
     double latitud = Cachehelper.getData(key: "latitude");
     double longitud = Cachehelper.getData(key: "longitude");
     return BlocProvider(
-      create: (BuildContext context) => ShopCubit()..getStoresData(latitude: latitud,longitude: longitud),
+      create: (BuildContext context) => ShopCubit()..getStoresData(latitude: latitud==null?27.149890:latitud,longitude: longitud==null?-13.199970:longitud),
       child: BlocConsumer<ShopCubit, ShopStates>(
         listener: (context, state) {},
         builder: (context, state) {

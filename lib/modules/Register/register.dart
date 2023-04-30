@@ -87,14 +87,14 @@ class _RegisterState extends State<Register> {
     return <String, dynamic>{
       'version.release': build.version.release,
       'fingerprint': build.host,
-      'h':build.id,
-      'b':build.type,
-      'c':build.device,
-      's':build.model,
-      'e':build.hardware,
-      'y':build.product,
-      'z':build.brand,
-      'A':build.supported32BitAbis
+      'id':build.id,
+      'type':build.type,
+      'device':build.device,
+      'model':build.model,
+      'hardware':build.hardware,
+      'product':build.product,
+      'brand':build.brand,
+      'supported':build.supported32BitAbis
 
     };
   }
@@ -146,16 +146,12 @@ class _RegisterState extends State<Register> {
         child: BlocConsumer<ShopCubit,ShopStates>(
             listener: (context,state){
 
-
             if(state is MyorderSucessfulState){
-              navigateTo(context, Order(order: state.order,));
+              navigateTo(context, Order(order: state.order));
             }
             },
             builder: (context,state){
               String access_token = Cachehelper.getData(key: "fcmtoken");
-
-
-              print(access_token);
               return Directionality(
                 textDirection: TextDirection.rtl,
                 child: Scaffold(
@@ -281,7 +277,9 @@ class _RegisterState extends State<Register> {
                                 ),
 
                                 height(25),
-                                widget.routing != 'profile'? Padding(
+
+
+                                Padding(
                                   padding: const EdgeInsets.only(left: 20, right: 20),
                                   child: GestureDetector(
                                     onTap: () async {
@@ -299,131 +297,6 @@ class _RegisterState extends State<Register> {
                                           print(urlwebview);
                                         }
                                       }
-
-
-                                      // if (fromkey.currentState.validate()) {
-                                      //   fromkey.currentState.save();
-                                      //   setState(() {
-                                      //     isloading = false;
-                                      //   });
-                                      //     try {
-                                      //       final authcredential =
-                                      //       await FirebaseAuth.instance.signInAnonymously();
-                                      //       setState(() {
-                                      //         isloading = false;
-                                      //       });
-                                      //       if (authcredential.user != null) {
-                                      //         fbm.getToken().then((token){
-                                      //           fcmtoken = token;
-                                      //           ShopCubit.get(context).RegisterApi({
-                                      //             "first_name":FirstnameController.text,
-                                      //             "last_name":LastnameController.text,
-                                      //             "phone":"${phoneNumber}",
-                                      //             "device":{
-                                      //               "token_firebase":"${fcmtoken}",
-                                      //               "device_id":"z0f33s43p4",
-                                      //               "device_name":"iphone",
-                                      //               "ip_address":"192.168.1.1",
-                                      //               "mac_address":"192.168.1.1"
-                                      //             }
-                                      //           });
-                                      //           Cachehelper.sharedPreferences.setString("fcmtoken",token).then((value) {
-                                      //             print('token fcm is saved');
-                                      //           });
-                                      //         });
-                                      //       }
-                                      //     } on FirebaseAuthException catch (e) {
-                                      //       setState(() {
-                                      //         isloading = false;
-                                      //       });
-                                      //       print("error is ${e.message}");
-                                      //     }
-                                      //   }
-
-
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(5),
-                                          color: AppColor
-
-                                      ),
-                                      child: Center(
-                                          child: isloading ? Text('التالي',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
-                                          ) : CircularProgressIndicator(color: Colors.white)),
-                                      height: 58,
-                                      width: double.infinity,
-                                    ),
-                                  ),
-                                )
-                                    :Padding(
-                                  padding: const EdgeInsets.only(left: 20, right: 20),
-                                  child: GestureDetector(
-                                    onTap: () async {
-
-                                      if (fromkey.currentState.validate()) {
-                                        fromkey.currentState.save();
-                                        setState(() {
-                                          iswebView=true;
-                                        });
-                                      }
-                                      if(iswebView){
-                                        if (fromkey.currentState.validate()) {
-                                          fromkey.currentState.save();
-                                          var phone = phoneNumber.replaceFirst('+', '');
-                                          urlwebview = "https://canariapp.com/otp?phoneNumber=${phone}";
-                                          print(urlwebview);
-                                        }
-                                      }
-                                      //
-                                      // if (fromkey.currentState.validate()) {
-                                      //   fromkey.currentState.save();
-                                      //   setState(() {
-                                      //     isloading = false;
-                                      //   });
-                                      //   try {
-                                      //     final authcredential =
-                                      //     await FirebaseAuth.instance.signInAnonymously();
-                                      //     setState(() {
-                                      //       isloading = false;
-                                      //     });
-                                      //     if (authcredential.user != null) {
-                                      //       fbm.getToken().then((token){
-                                      //         print(token);
-                                      //         fcmtoken = token;
-                                      //         ShopCubit.get(context).RegisterApi({
-                                      //           "first_name":FirstnameController.text,
-                                      //           "last_name":LastnameController.text,
-                                      //           "phone":"${phoneNumber}",
-                                      //           "device":{
-                                      //             "token_firebase":"${fcmtoken}",
-                                      //             "device_id":"z0f33s43p4",
-                                      //             "device_name":"iphone",
-                                      //             "ip_address":"192.168.1.1",
-                                      //             "mac_address":"192.168.1.1"
-                                      //           }
-                                      //         }).then((value) {
-                                      //                                                        }).catchError((onError){
-                                      //
-                                      //         });
-                                      //         Cachehelper.sharedPreferences.setString("fcmtoken",token).then((value) {
-                                      //           print('token fcm is saved');
-                                      //         });
-                                      //       });
-                                      //     }
-                                      //   } on FirebaseAuthException catch (e) {
-                                      //     setState(() {
-                                      //       isloading = false;
-                                      //     });
-                                      //     print("error is ${e.message}");
-                                      //   }
-                                      // }
-
-
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -442,6 +315,9 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                 ),
+
+
+
                                 height(6),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -485,10 +361,14 @@ class _RegisterState extends State<Register> {
                               name: 'messageHandler',
                               onMessageReceived: (JavascriptMessage message) async {
                                 Map<String, dynamic> data = jsonDecode(message.message);
-                                print(data);
+                                if(data['action']=='CHANGE_NUMBER'){
+                                  iswebView = false;
+                                  setState(() {
+
+                                  });
+                                }
                                 if(data['action'] == 'OTP_SUCCESS'){
                                   if(islogin){
-
                                     final authcredential = await FirebaseAuth.instance.signInAnonymously();
                                     if(authcredential.user!=null){
                                       fbm.getToken().then((token)async{
@@ -507,7 +387,7 @@ class _RegisterState extends State<Register> {
                                           },
                                           url: 'https://www.api.canariapp.com/v1/client/login',
                                         ).then((value) {
-                                          printFullText(value.data.toString());
+                                           printFullText(value.data.toString());
                                           Cachehelper.sharedPreferences.setString("deviceId",value.data['device_id'].toString());
                                           Cachehelper.sharedPreferences.setString("token",value.data['token']);
                                           Cachehelper.sharedPreferences.setString("first_name",value.data['client']['first_name']);
@@ -522,13 +402,13 @@ class _RegisterState extends State<Register> {
                                                 "latitude":latitud,
                                                 "longitude":longitud
                                               },
-                                              "type":"pickup",
+                                              "type":"delivery",
                                               "note":{
                                                 "allergy_info":"${widget.NoteController.text}",
                                                 "special_requirements":"${widget.NoteController.text}"
                                               },
                                               "products":dataService.itemsCart,
-                                              "device_id":device_id
+                                              "device_id":value.data['device_id']
                                             });
                                             isloading = true;
                                           });
@@ -551,31 +431,35 @@ class _RegisterState extends State<Register> {
                                     }
                                   }
 
-
-
                                   else{
                                     try {
                                       final authcredential = await FirebaseAuth.instance.signInAnonymously();
                                       setState(() {
                                         isloading = false;
                                       });
-                                      if (authcredential.user != null) {
-                                        fbm.getToken().then((token){
-                                          print(token);
+                                      if(authcredential.user!=null){
+                                        fbm.getToken().then((token)async{
                                           fcmtoken = token;
-                                          ShopCubit.get(context).RegisterApi({
-                                            "first_name":FirstnameController.text,
-                                            "last_name":LastnameController.text,
-                                            "phone":"${phoneNumber}",
-                                            "device":{
-                                              "token_firebase":"${fcmtoken}",
-                                              "device_id":"z0f33s43p4",
-                                              "device_name":"iphone",
-                                              "ip_address":"192.168.1.1",
-                                              "mac_address":"192.168.1.1"
-                                            }
-                                          }).then((value) {
-                                            String device_id = Cachehelper.getData(key:"deviceId");
+                                          await DioHelper.postData(
+                                            data:{
+                                              "first_name":FirstnameController.text,
+                                              "last_name":LastnameController.text,
+                                              "phone":"${phoneNumber}",
+                                              "device":{
+                                                "token_firebase":"${fcmtoken}",
+                                                "device_id":"z0f33s43p4",
+                                                "device_name":"iphone",
+                                                "ip_address":"192.168.1.1",
+                                                "mac_address":"192.168.1.1"
+                                              }
+                                            },
+                                            url: 'https://www.api.canariapp.com/v1/client/register',
+                                          ).then((value){
+                                            Cachehelper.sharedPreferences.setString("deviceId",value.data['device_id'].toString());
+                                            Cachehelper.sharedPreferences.setString("token",value.data['token']);
+                                            Cachehelper.sharedPreferences.setString("first_name",value.data['client']['first_name']);
+                                            Cachehelper.sharedPreferences.setString("last_name",value.data['client']['last_name']);
+                                            Cachehelper.sharedPreferences.setString("phone",value.data['client']['phone']);
                                             ShopCubit.get(context).CheckoutApi({
                                               "store_id":StoreId,
                                               "payment_method":'CASH',
@@ -584,7 +468,7 @@ class _RegisterState extends State<Register> {
                                                 "latitude":latitud,
                                                 "longitude":longitud
                                               },
-                                              "type":"pickup",
+                                              "type":"delivery",
                                               "note":{
                                                 "allergy_info":"${widget.NoteController.text}",
                                                 "special_requirements":"${widget.NoteController.text}"
@@ -592,17 +476,23 @@ class _RegisterState extends State<Register> {
                                               "products":dataService.itemsCart,
                                               "device_id":device_id
                                             });
-
                                             setState(() {
-
                                               isloading = true;
                                             });
-                                          });
-                                          Cachehelper.sharedPreferences.setString("fcmtoken",token).then((value) {
-                                            print('token fcm is saved');
-
+                                          }).catchError((error){
                                             setState(() {
-                                              isloading = true;
+                                              Fluttertoast.showToast(
+                                                  msg: "لديك حساب قم تسجيل الدخول",
+                                                  toastLength: Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  webShowClose:false,
+                                                  backgroundColor: AppColor,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0
+                                              );
+                                              isloading =true;
+                                              islogin = true;
+                                              iswebView = false;
                                             });
                                           });
                                         });
@@ -612,6 +502,15 @@ class _RegisterState extends State<Register> {
                                         isloading = false;
                                       });
                                       print("error is ${e.message}");
+                                      Fluttertoast.showToast(
+                                          msg: "${e.message}",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          webShowClose:false,
+                                          backgroundColor: AppColor,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0
+                                      );
                                     }
                                   }
                                 }
@@ -622,7 +521,6 @@ class _RegisterState extends State<Register> {
                             });
                           },
                         ),
-
                         isLoading ?Center(child: CircularProgressIndicator(color: Colors.red,backgroundColor:Color(0xFFFFCDD2)))
                             : Stack(),
                       ],
@@ -637,6 +535,8 @@ class _RegisterState extends State<Register> {
   }
 
 }
+
+
 
 
 
@@ -668,7 +568,6 @@ Widget buildTextFiled(
         ),
         contentPadding: EdgeInsets.symmetric(vertical: 19.0,horizontal: 10),
       filled: true,
-
         hintText: '${hintText}',
         hintStyle: TextStyle(color: Color(0xFF7B919D), fontSize: 14)),
   );

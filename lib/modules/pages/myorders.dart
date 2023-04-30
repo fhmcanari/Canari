@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopapp/Layout/shopcubit/shopstate.dart';
 import 'package:shopapp/modules/pages/order.dart';
 import 'package:intl/intl.dart';
+import 'package:shopapp/shared/components/constants.dart';
 import 'dart:ui' as ui;
 import '../../Layout/shopcubit/shopcubit.dart';
 import '../../shared/components/components.dart';
@@ -207,7 +208,7 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Center(child: CircularProgressIndicator())
+                  Center(child: CircularProgressIndicator(color: AppColor,))
                 ],
               ),
             );

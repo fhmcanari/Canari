@@ -20,24 +20,22 @@ class _ResturantGridlState extends State<ResturantGridl> {
   var price;
   @override
   Widget build(BuildContext context) {
-
+    String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
     return InkWell(
       onTap: ()async{
         var totalPrice = await Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => RestaurantPage(
-
                           name: widget.Restaurant['name'],
                           cover: widget.Restaurant['cover'],
-                          price_delivery: widget.Restaurant['delivery_price'],
+                          price_delivery:widget.Restaurant['delivery_price'],
                           rate: widget.Restaurant['rate'],
-                          deliveryTime: widget.Restaurant['delivery_time'],
+                          deliveryTime:widget.Restaurant['delivery_time'],
                           cuisines: widget.Restaurant['categories'],
                           id:widget.id,
                           slug:widget.Restaurant['slug'],
-                          brandlogo:widget.Restaurant['logo'] ,
-
+                          brandlogo:widget.Restaurant['logo'],
                         )));
         setState(() {
 
@@ -250,9 +248,27 @@ class _ResturantGridlState extends State<ResturantGridl> {
                       ),
                    ],
                  ),
+                     Spacer(),
+                     if(widget.Restaurant['tags'].length>0)
+                       Container(
+                         decoration: BoxDecoration(
+                           borderRadius: BorderRadius.circular(5),
+                           color: Color(0xfffafafa),
+                         ),
+
+                         child: Padding(
+                           padding: const EdgeInsets.only(top: 4,left: 8,right: 8,bottom: 6),
+                           child: Text('جديد',
+                             style:TextStyle(
+                                 color:Color(0xffff7144),
+                                 fontSize: 13,
+                                 fontWeight: FontWeight.bold
+                             ),),
+                         ),
+                       )
                    ],
                  ),
-
+                 
 
                  // height(9),
                ],

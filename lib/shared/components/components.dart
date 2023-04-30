@@ -30,22 +30,22 @@ Widget appbar(context,{myLocation,IconData icon,Function ontap,IconData iconback
                          onPressed:ontap,
                       icon:Icon(icon,color: AppColor,size: 25,))
                     ],
-                title: Row(
-                  children: [
-                    Icon(Icons.location_on,color: AppColor,),
-                    Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text('تسليم الى',style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 13),),
-                            GestureDetector(
-                              onTap:onback,
-                              child: Row(
+                title: GestureDetector(
+                  onTap:onback,
+                  child: Row(
+                    children: [
+                      Icon(Icons.location_on,color: AppColor,),
+                      Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text('تسليم الى',style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 13),),
+                              Row(
                                 children: [
                                   myLocation.length<=30? Text(
                               myLocation!=null? "${myLocation}":'Select location',
@@ -80,14 +80,14 @@ Widget appbar(context,{myLocation,IconData icon,Function ontap,IconData iconback
                                   ),
                                 ],
                               ),
-                            ),
 
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
 
-                  ],
+                    ],
+                  ),
                 )
               );
 }

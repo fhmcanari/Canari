@@ -26,9 +26,9 @@ class _ResturantCategoriesState extends State<ResturantCategories> {
   }
   @override
   void didUpdateWidget(covariant ResturantCategories oldWidget) {
-    controller.animateTo(50.0*widget.selectedIndex,
+    controller.animateTo(60.0*widget.selectedIndex,
      duration: Duration(milliseconds: 100),
-      curve: Curves.ease);
+      curve: Curves.bounceIn);
     super.didUpdateWidget(oldWidget);
   }
   @override
@@ -53,13 +53,12 @@ class _ResturantCategoriesState extends State<ResturantCategories> {
                     });
                   },
                   child: Container(
-                    
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border(
-                        bottom: widget.selectedIndex==index?BorderSide(width: 2.0,color: Colors.red,):BorderSide.none
+                        bottom: widget.selectedIndex==index?BorderSide(width: 3.0,color: Colors.red):BorderSide.none
                       ),
-                      
+
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -70,7 +69,7 @@ class _ResturantCategoriesState extends State<ResturantCategories> {
                           fontWeight:widget.selectedIndex!=index? FontWeight.w500:FontWeight.bold,
                           color: widget.selectedIndex==index?AppColor:Color(0xff7F8487),
                           fontSize: 15),),
-                         
+
                       ],
                     ),
                   ),

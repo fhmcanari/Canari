@@ -13,7 +13,8 @@ import '../../shared/network/remote/cachehelper.dart';
 import 'cartPage/cart_empty.dart';
 
 class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({Key key}) : super(key: key);
+  final delivery_price;
+  const CheckoutPage({Key key, this.delivery_price}) : super(key: key);
 
   @override
   _CheckoutPageState createState() => _CheckoutPageState();
@@ -54,7 +55,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
         },
         markerId: MarkerId('1'),
         position:LatLng(latitud, longitud),
-
       )
     };
     return BlocProvider(
@@ -519,7 +519,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                   ),
 
                                   Text(
-                                      "${deliveryPrice}  دراهم ",
+                                      "${widget.delivery_price}  دراهم ",
                                       style: TextStyle(fontWeight: FontWeight.w400,color: Colors.black)
                                   ),
                                 ],

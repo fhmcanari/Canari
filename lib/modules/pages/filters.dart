@@ -215,15 +215,21 @@ class _FiltersState extends State<Filters> {
                    ),
                    height(5),
                    filters.length==0?Padding(
-                     padding: const EdgeInsets.only(left: 15,right: 15),
-                     child: Container(
-                       color: Colors.redAccent,
-                         child: Padding(
-                           padding: const EdgeInsets.all(8.0),
+                     padding: const EdgeInsets.only(top: 50),
+                     child: Column(
+                       children: [
+                         Image.network('https://canariapp.com/_nuxt/img/binoculars.9681313.png',),
+                         Padding(
+                           padding: const EdgeInsets.only(left: 25,right: 25,top: 10),
                            child: Text('لا يوجد مطعم متوفر بهذا الفلتر حاول مرة أخرى بفلتر مختلف',style: TextStyle(
-                             color: Colors.white
-                           ),),
-                         )),
+                             fontSize: 18,
+                             fontWeight: FontWeight.bold,
+                           ),
+                           textAlign: TextAlign.center,
+                           ),
+                         ),
+                       ],
+                     ),
                    ):height(0),
                    ListView.builder(
                      physics: NeverScrollableScrollPhysics(),

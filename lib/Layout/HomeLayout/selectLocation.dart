@@ -18,7 +18,8 @@ class SelectLocation extends StatefulWidget {
 }
 
 class _SelectLocationState extends State<SelectLocation> {
-  var myLocation = 'select location';
+  var myLocation = 'اختر موقع';
+  bool ismylocation = false;
   Completer<GoogleMapController> _controller = Completer();
   static final CameraPosition _initialCameraPosition = CameraPosition(
       target: LatLng(27.149890, -13.199970),
@@ -56,6 +57,8 @@ class _SelectLocationState extends State<SelectLocation> {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low).then((value) {
       latitude = value.latitude;
       longitude = value.longitude;
+      myLocation = 'موقعي الحالي';
+      ismylocation =true;
       // lat = value.latitude;
       // lag = value.longitude;
       locationCollected = true;
@@ -74,9 +77,8 @@ class _SelectLocationState extends State<SelectLocation> {
          latitude = position.latitude;
          longitude =position.longitude;
          locationCollected = true;
+         myLocation = 'موقعي الحالي';
          _animateCamera(position);
-          print(position.longitude);
-          print(position.latitude);
       setState(() => currentPosition = position);
     }).catchError((e) {
       debugPrint(e);
@@ -94,26 +96,18 @@ class _SelectLocationState extends State<SelectLocation> {
 
   Future getPlace({latitude,longitude})async{
     List placemarks = await placemarkFromCoordinates(latitude,longitude);
-         myLocation = placemarks[0].street;
+         myLocation =ismylocation?'موقعي الحالي': placemarks[0].street;
          setState(() {
          });
-         // showModalBottomSheet(
-         //              isScrollControlled: false,
-         //              context: context, builder: (context){
-         //              return showButton(myLocation: myLocation,latitude: latitude,longitude: longitude,);
-         //            });
   }
 
   Set<Marker>myMarkers={
    Marker(
-                       draggable: true,
-                       onDragEnd: (LatLng latLng){
-
-                       },
-                      markerId: MarkerId('1'),
-                      position:LatLng(27.149890, -13.199970),
-
-                      )
+       draggable: true,
+      onDragEnd: (LatLng latLng){},
+      markerId: MarkerId('1'),
+      position:LatLng(27.149890, -13.199970),
+   )
   };
 
     var uuid = Uuid();
@@ -150,7 +144,7 @@ class _SelectLocationState extends State<SelectLocation> {
 
   @override
   void initState(){
-    getLocation();
+
     _handleLocationPermission();
      getPlace(latitude:27.149890 ,longitude:-13.199970,);
      latitude = 27.149890;
@@ -235,7 +229,7 @@ class _SelectLocationState extends State<SelectLocation> {
                          longitude:longitude,
                        )));
                       }
-                       // Navigator.pop(context);
+
                     },
                     child: Container(
                         decoration: BoxDecoration(
@@ -317,53 +311,4 @@ class _SelectLocationState extends State<SelectLocation> {
 }
 
 
-class showButton extends StatelessWidget {
-  const showButton({
-    Key key,
-    @required this.myLocation, this.latitude, this.longitude,
-  }) : super(key: key);
 
-  final myLocation;
-  final double latitude;
-  final double longitude;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20,top: 15,right:20 ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text('Delivery To',style: TextStyle(color: Color.fromARGB(255, 116, 117, 117),fontWeight: FontWeight.w400,fontSize: 14.50)),
-          height(8),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(Icons.location_on_outlined,size: 17,color: Colors.red),
-              width(6),
-              Expanded(child: Text('${myLocation}',style: TextStyle(color: Color.fromARGB(255, 68, 71, 71),fontWeight: FontWeight.w600,fontSize: 14,),maxLines: 1,)),
-            ],
-          ),
-          height(8),
-           GestureDetector(
-             onTap: (){
-               // navigateTo(context, MyHomePage(myLocation: myLocation,latitude: latitude,longitude: longitude,));
-               Navigator.pop(context);
-             },
-             child: Container(
-               decoration: BoxDecoration(
-                 color: Colors.red,
-                 borderRadius: BorderRadius.circular(5)
-               ),
-               height: 50,
-               width: double.infinity,
-               child: Center(child: Text('Deliver here',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),))),
-           ),
-          height(10),
-        ],
-      ),
-    );
-  }
-}
