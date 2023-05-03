@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by Hasan M. Hallak on 03/05/2023.
+  
+*/
+NSLocationUsageDescription = "Nous avons besoin d&apos;accéder à votre emplacement pour vous fournir des informations précises et pertinentes sur les restaurants à proximité, les options de livraison et les délais de livraison estimés.";
+NSLocationWhenInUseUsageDescription = "Nous avons besoin d&apos;accéder à votre emplacement pour vous fournir des informations précises et pertinentes sur les restaurants à proximité, les options de livraison et les délais de livraison estimés.";
