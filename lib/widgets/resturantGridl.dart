@@ -173,14 +173,13 @@ class _ResturantGridlState extends State<ResturantGridl> {
                      Text(
                        '${widget.Restaurant['name']}',
                         style:TextStyle(
-                           fontWeight: FontWeight.normal,
+                           fontWeight: FontWeight.bold,
                            color: Color(0xFF000000),
                            fontSize: 15),
                      ),
                    ],
                  ),
-                 // Restaurant['categories']
-                 height(3),
+                 height(6),
                  Wrap(
                    crossAxisAlignment: WrapCrossAlignment.start,
                    children: [

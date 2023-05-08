@@ -14,7 +14,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
+FirebaseMessaging messaging = FirebaseMessaging.instance;
 Future<bool>checkupdate() async {
   final info = await PackageInfo.fromPlatform();
   String appVersion = info.buildNumber;
@@ -62,6 +63,7 @@ void main() async {
   DioHelper.init();
   Cachehelper.init();
   await Firebase.initializeApp();
+
   runApp(MyApp());
 }
 
@@ -76,7 +78,11 @@ class _MyAppState extends State<MyApp> {
   ConnectivityResult _connectivityResult = ConnectivityResult.none;
   @override
   void initState() {
-
+    messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
     _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     super.initState();
   }

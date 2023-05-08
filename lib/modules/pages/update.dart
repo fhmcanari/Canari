@@ -54,7 +54,7 @@ class _UpdateState extends State<Update> {
                           launch("https://play.google.com/store/apps/details?id=com.canari.app");
                         }
                         else if(Platform.isIOS){
-                          launch("https://apps.apple.com/ma/app/el-sahariano-travel/id1598163292");
+                          launch("https://apps.apple.com/ma/app/canari-food-delivery/id6448685108");
                         }
                       },
                       child: Text('تحديث',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),)),

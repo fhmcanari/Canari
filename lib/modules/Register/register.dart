@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mac_address/mac_address.dart';
 import 'package:country_list_pick/country_list_pick.dart';
@@ -116,7 +117,37 @@ class _RegisterState extends State<Register> {
       'id':data.identifierForVendor
     };
   }
+  String phoneNumber, verificationId;
+  String otp, authStatus = "";
+  Future<void> verifyPhoneNumber(BuildContext context) async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      timeout: const Duration(seconds: 15),
+      verificationCompleted: (AuthCredential authCredential) {
+        setState(() {
+          authStatus = "Your account is successfully verified";
+        });
+      },
+      verificationFailed: (authException) {
+        setState(() {
+          authStatus = "Authentication failed";
+        });
+      },
+      codeSent: (String verId, [int forceCodeResent]) {
+        verificationId = verId;
+        setState(() {
+          authStatus = "OTP has been successfully send";
+        });
 
+      },
+      codeAutoRetrievalTimeout: (String verId) {
+        verificationId = verId;
+        setState(() {
+          authStatus = "TIMEOUT";
+        });
+      },
+    );
+  }
   @override
   void initState() {
     fbm.getToken().then((token){
@@ -152,21 +183,21 @@ class _RegisterState extends State<Register> {
             },
             builder: (context,state){
               String access_token = Cachehelper.getData(key: "fcmtoken");
-              return Directionality(
-                textDirection: TextDirection.rtl,
-                child: Scaffold(
-                    appBar: AppBar(
-                      elevation: 0,
-                      backgroundColor: Colors.white,
-                      automaticallyImplyLeading: false,
-                    ),
+              return Scaffold(
+                  appBar: AppBar(
+                    elevation: 0,
                     backgroundColor: Colors.white,
-                    body:iswebView==false? SingleChildScrollView(
+                    automaticallyImplyLeading: false,
+                  ),
+                  backgroundColor: Colors.white,
+                  body:iswebView==false? Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: SingleChildScrollView(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image(image: AssetImage('assets/CANARY-.png',)),
+                          Image(image: AssetImage('assets/CANARY-.png')),
                              height(50),
                           Form(
                             key: fromkey,
@@ -186,6 +217,11 @@ class _RegisterState extends State<Register> {
                                 islogin==false?Padding(
                                   padding: const EdgeInsets.only(left: 20, right: 20),
                                   child: buildTextFiled(
+                                    onEditingComplete: (){
+                                      if (fromkey.currentState.validate()) {
+                                        fromkey.currentState.save();
+                                      }
+                                    },
                                     controller: FirstnameController,
                                     keyboardType: TextInputType.name,
                                     hintText: 'الاسم الأول',
@@ -196,6 +232,11 @@ class _RegisterState extends State<Register> {
                                 islogin==false? Padding(
                                   padding: const EdgeInsets.only(left: 20, right: 20),
                                   child: buildTextFiled(
+                                    onEditingComplete: (){
+                                      if (fromkey.currentState.validate()) {
+                                        fromkey.currentState.save();
+                                      }
+                                    },
                                     controller: LastnameController,
                                     valid: 'اسم العائلة',
                                     keyboardType: TextInputType.name,
@@ -257,6 +298,11 @@ class _RegisterState extends State<Register> {
                                       Expanded(
                                         flex: 3,
                                         child: buildTextFiled(
+                                            onEditingComplete: (){
+                                              if (fromkey.currentState.validate()) {
+                                                fromkey.currentState.save();
+                                              }
+                                            },
                                             keyboardType: TextInputType.number,
                                             hintText: 'رقم الهاتف',
                                             valid: 'رقم الهاتف',
@@ -285,18 +331,14 @@ class _RegisterState extends State<Register> {
                                     onTap: () async {
                                       if (fromkey.currentState.validate()) {
                                         fromkey.currentState.save();
+                                        verifyPhoneNumber(context);
+                                        iswebView=true;
                                         setState(() {
-                                          iswebView=true;
+
                                         });
                                       }
-                                      if(iswebView){
-                                        if (fromkey.currentState.validate()) {
-                                          fromkey.currentState.save();
-                                          var phone = phoneNumber.replaceFirst('+', '');
-                                          urlwebview = "https://canariapp.com/otp?phoneNumber=${phone}";
-                                          print(urlwebview);
-                                        }
-                                      }
+
+
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -349,34 +391,59 @@ class _RegisterState extends State<Register> {
                           ),
                         ],
                       ),
-                    ): Stack(
-                      children: <Widget>[
-                        WebView(
-                          key: _key,
-                          initialUrl:'${urlwebview}',
-                          zoomEnabled: false,
-                          javascriptMode: JavascriptMode.unrestricted,
-                          javascriptChannels:<JavascriptChannel>{
-                            JavascriptChannel(
-                              name: 'messageHandler',
-                              onMessageReceived: (JavascriptMessage message) async {
-                                Map<String, dynamic> data = jsonDecode(message.message);
-                                if(data['action']=='CHANGE_NUMBER'){
-                                  iswebView = false;
-                                  setState(() {
+                    ),
+                  ):
+                  Stack(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Text(
+                                'تَحَقّق',
+                                style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          height(6),
+                          Text('انتضر قليلا ثم أدخل الرمز الذي أرسلناه لك للتو على رقمك ', style: TextStyle(fontSize: 17.0,color: Colors.grey[500]),textAlign: TextAlign.center),
+                          TextButton(onPressed: (){
+                            iswebView = false;
+                            setState(() {
 
-                                  });
-                                }
-                                if(data['action'] == 'OTP_SUCCESS'){
+                            });
+                          }, child: Text('تغيير رقم',style: TextStyle(
+                              color: AppColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15.8
+                          ),)),
+
+                          VerificationCode(
+                            fillColor: Colors.grey[100],
+                            fullBorder: true,
+                            underlineUnfocusedColor: Colors.grey[100],
+                            textStyle: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.black,fontSize: 18,fontWeight: FontWeight.bold),
+                            keyboardType: TextInputType.number,
+                            underlineColor: AppColor,
+                            length: 6,
+                            cursorColor: Colors.blue,
+                            margin: const EdgeInsets.all(5),
+                            onCompleted: (String value) {
+                              setState(() async {
+                                code = value;
+                                isLoading = false;
+                                await FirebaseAuth.instance.signInWithCredential(PhoneAuthProvider.credential(verificationId: verificationId, smsCode: code)).then((value){
                                   if(islogin){
-                                    final authcredential = await FirebaseAuth.instance.signInAnonymously();
-                                    if(authcredential.user!=null){
+                                    if(FirebaseAuth.instance.currentUser!=null){
                                       fbm.getToken().then((token)async{
                                         fcmtoken = token;
                                         await DioHelper.postData(
                                           data:{
                                             "phone": "${phoneNumber}",
-                                            "uid": "${data['payload']['uid']}",
+                                            "uid": "${FirebaseAuth.instance.currentUser.uid}",
                                             "device":{
                                               "token_firebase":"${fcmtoken}",
                                               "device_id":"z0f33s43p4",
@@ -387,7 +454,7 @@ class _RegisterState extends State<Register> {
                                           },
                                           url: 'https://www.api.canariapp.com/v1/client/login',
                                         ).then((value) {
-                                           printFullText(value.data.toString());
+                                          printFullText(value.data.toString());
                                           Cachehelper.sharedPreferences.setString("deviceId",value.data['device_id'].toString());
                                           Cachehelper.sharedPreferences.setString("token",value.data['token']);
                                           Cachehelper.sharedPreferences.setString("first_name",value.data['client']['first_name']);
@@ -414,7 +481,6 @@ class _RegisterState extends State<Register> {
                                           });
                                         }).catchError((error){
                                           setState(() {
-                                            printFullText(error.toString());
                                             Fluttertoast.showToast(
                                                 msg: "ليس لديك حساب قم بانشاء واحد",
                                                 toastLength: Toast.LENGTH_SHORT,
@@ -424,110 +490,229 @@ class _RegisterState extends State<Register> {
                                                 textColor: Colors.white,
                                                 fontSize: 16.0
                                             );
-                                           iswebView = false;
+                                            isloading =true;
+                                            islogin = false;
+                                            iswebView = false;
                                           });
                                         });
                                       });
                                     }
-                                  }
-
-                                  else{
-                                    try {
-                                      final authcredential = await FirebaseAuth.instance.signInAnonymously();
-                                      setState(() {
-                                        isloading = false;
-                                      });
-                                      if(authcredential.user!=null){
-                                        fbm.getToken().then((token)async{
-                                          fcmtoken = token;
-                                          await DioHelper.postData(
-                                            data:{
-                                              "first_name":FirstnameController.text,
-                                              "last_name":LastnameController.text,
-                                              "phone":"${phoneNumber}",
-                                              "device":{
-                                                "token_firebase":"${fcmtoken}",
-                                                "device_id":"z0f33s43p4",
-                                                "device_name":"iphone",
-                                                "ip_address":"192.168.1.1",
-                                                "mac_address":"192.168.1.1"
-                                              }
+                                  }else{
+                                    fbm.getToken().then((token)async{
+                                      fcmtoken = token;
+                                      await DioHelper.postData(
+                                        data:{
+                                          "first_name":FirstnameController.text,
+                                          "last_name":LastnameController.text,
+                                          "phone":"${phoneNumber}",
+                                          "device":{
+                                            "token_firebase":"${fcmtoken}",
+                                            "device_id":"z0f33s43p4",
+                                            "device_name":"iphone",
+                                            "ip_address":"192.168.1.1",
+                                            "mac_address":"192.168.1.1"
+                                          }
+                                        },
+                                        url: 'https://www.api.canariapp.com/v1/client/register',
+                                      ).then((value) {
+                                        Cachehelper.sharedPreferences.setString("deviceId",value.data['device_id'].toString());
+                                        Cachehelper.sharedPreferences.setString("token",value.data['token']);
+                                        Cachehelper.sharedPreferences.setString("first_name",value.data['client']['first_name']);
+                                        Cachehelper.sharedPreferences.setString("last_name",value.data['client']['last_name']);
+                                        Cachehelper.sharedPreferences.setString("phone",value.data['client']['phone']);
+                                        setState(() {
+                                          ShopCubit.get(context).CheckoutApi({
+                                            "store_id":StoreId,
+                                            "payment_method":'CASH',
+                                            "delivery_address":{
+                                              "label":MyLocation,
+                                              "latitude":latitud,
+                                              "longitude":longitud
                                             },
-                                            url: 'https://www.api.canariapp.com/v1/client/register',
-                                          ).then((value){
-                                            Cachehelper.sharedPreferences.setString("deviceId",value.data['device_id'].toString());
-                                            Cachehelper.sharedPreferences.setString("token",value.data['token']);
-                                            Cachehelper.sharedPreferences.setString("first_name",value.data['client']['first_name']);
-                                            Cachehelper.sharedPreferences.setString("last_name",value.data['client']['last_name']);
-                                            Cachehelper.sharedPreferences.setString("phone",value.data['client']['phone']);
-                                            ShopCubit.get(context).CheckoutApi({
-                                              "store_id":StoreId,
-                                              "payment_method":'CASH',
-                                              "delivery_address":{
-                                                "label":MyLocation,
-                                                "latitude":latitud,
-                                                "longitude":longitud
-                                              },
-                                              "type":"delivery",
-                                              "note":{
-                                                "allergy_info":"${widget.NoteController.text}",
-                                                "special_requirements":"${widget.NoteController.text}"
-                                              },
-                                              "products":dataService.itemsCart,
-                                              "device_id":device_id
-                                            });
-                                            setState(() {
-                                              isloading = true;
-                                            });
-                                          }).catchError((error){
-                                            setState(() {
-                                              Fluttertoast.showToast(
-                                                  msg: "لديك حساب قم تسجيل الدخول",
-                                                  toastLength: Toast.LENGTH_SHORT,
-                                                  gravity: ToastGravity.BOTTOM,
-                                                  webShowClose:false,
-                                                  backgroundColor: AppColor,
-                                                  textColor: Colors.white,
-                                                  fontSize: 16.0
-                                              );
-                                              isloading =true;
-                                              islogin = true;
-                                              iswebView = false;
-                                            });
+                                            "type":"delivery",
+                                            "note":{
+                                              "allergy_info":"${widget.NoteController.text}",
+                                              "special_requirements":"${widget.NoteController.text}"
+                                            },
+                                            "products":dataService.itemsCart,
+                                            "device_id":value.data['device_id']
+                                          });
+                                          isloading = true;
+                                        });
+                                      }).catchError((error){
+                                        setState(() {
+                                          Fluttertoast.showToast(
+                                              msg: "لديك حساب قم بتسجيل دخول",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.BOTTOM,
+                                              webShowClose:false,
+                                              backgroundColor: AppColor,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0
+                                          );
+                                          isloading =true;
+                                          islogin = true;
+                                          iswebView = false;
+                                        });
+                                      });
+                                    });
+                                  }
+
+                                });
+
+                              });
+                            },
+                            onEditing: (bool value) {
+                              setState(() {
+                                onEditing = value;
+
+                              });
+                              if (!onEditing) FocusScope.of(context).unfocus();
+                            },
+                          ),
+                          height(10),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('لم تتلق رمز؟ '),
+                              TextButton(onPressed: (){
+                                verifyPhoneNumber(context);
+                              }, child: Text('إعادة إرسال',style: TextStyle(
+                                  color: AppColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15.8
+                              ),)),
+
+                            ],
+                          ),
+                          height(6),
+                          GestureDetector(
+                            onTap: (){
+                              isLoading = false;
+                              FirebaseAuth.instance.signInWithCredential(PhoneAuthProvider.credential(verificationId: verificationId, smsCode: code)).then((value) async {
+                                await FirebaseAuth.instance.signInWithCredential(PhoneAuthProvider.credential(verificationId: verificationId, smsCode: code)).then((value){
+                                  if(islogin){
+                                    if(FirebaseAuth.instance.currentUser!=null){
+                                      fbm.getToken().then((token)async{
+                                        fcmtoken = token;
+                                        await DioHelper.postData(
+                                          data:{
+                                            "phone": "${phoneNumber}",
+                                            "uid": "${FirebaseAuth.instance.currentUser.uid}",
+                                            "device":{
+                                              "token_firebase":"${fcmtoken}",
+                                              "device_id":"z0f33s43p4",
+                                              "device_name":"iphone",
+                                              "ip_address":"192.168.1.1",
+                                              "mac_address":"192.168.1.1"
+                                            }
+                                          },
+                                          url: 'https://www.api.canariapp.com/v1/client/login',
+                                        ).then((value) {
+                                          printFullText(value.data.toString());
+                                          Cachehelper.sharedPreferences.setString("deviceId",value.data['device_id'].toString());
+                                          Cachehelper.sharedPreferences.setString("token",value.data['token']);
+                                          Cachehelper.sharedPreferences.setString("first_name",value.data['client']['first_name']);
+                                          Cachehelper.sharedPreferences.setString("last_name",value.data['client']['last_name']);
+                                          Cachehelper.sharedPreferences.setString("phone",value.data['client']['phone']);
+                                          setState(() {
+                                            Navigator.of(context).pop();
+                                          });
+                                        }).catchError((error){
+                                          setState(() {
+                                            Fluttertoast.showToast(
+                                                msg: "ليس لديك حساب قم بانشاء واحد",
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.BOTTOM,
+                                                webShowClose:false,
+                                                backgroundColor: AppColor,
+                                                textColor: Colors.white,
+                                                fontSize: 16.0
+                                            );
+                                            isloading =true;
+                                            islogin = false;
+                                            iswebView = false;
                                           });
                                         });
-                                      }
-                                    } on FirebaseAuthException catch (e) {
-                                      setState(() {
-                                        isloading = false;
                                       });
-                                      print("error is ${e.message}");
-                                      Fluttertoast.showToast(
-                                          msg: "${e.message}",
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.BOTTOM,
-                                          webShowClose:false,
-                                          backgroundColor: AppColor,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0
-                                      );
                                     }
+                                  }else{
+                                    fbm.getToken().then((token)async{
+                                      fcmtoken = token;
+                                      await DioHelper.postData(
+                                        data:{
+                                          "first_name":FirstnameController.text,
+                                          "last_name":LastnameController.text,
+                                          "phone":"${phoneNumber}",
+                                          "device":{
+                                            "token_firebase":"${fcmtoken}",
+                                            "device_id":"z0f33s43p4",
+                                            "device_name":"iphone",
+                                            "ip_address":"192.168.1.1",
+                                            "mac_address":"192.168.1.1"
+                                          }
+                                        },
+                                        url: 'https://www.api.canariapp.com/v1/client/register',
+                                      ).then((value) {
+                                        Cachehelper.sharedPreferences.setString("deviceId",value.data['device_id'].toString());
+                                        Cachehelper.sharedPreferences.setString("token",value.data['token']);
+                                        Cachehelper.sharedPreferences.setString("first_name",value.data['client']['first_name']);
+                                        Cachehelper.sharedPreferences.setString("last_name",value.data['client']['last_name']);
+                                        Cachehelper.sharedPreferences.setString("phone",value.data['client']['phone']);
+                                        setState(() {
+                                          Navigator.of(context).pop();
+                                        });
+                                      }).catchError((error){
+                                        setState(() {
+                                          Fluttertoast.showToast(
+                                              msg: "لديك حساب قم بتسجيل دخو",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.BOTTOM,
+                                              webShowClose:false,
+                                              backgroundColor: AppColor,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0
+                                          );
+                                          isloading =true;
+                                          islogin = false;
+                                          iswebView = false;
+                                        });
+                                      });
+                                    });
                                   }
-                                }
-                              },)},
-                          onPageFinished: (finish){
-                            setState(() {
-                              isLoading = false;
-                            });
-                          },
-                        ),
-                        isLoading ?Center(child: CircularProgressIndicator(color: Colors.red,backgroundColor:Color(0xFFFFCDD2)))
-                            : Stack(),
-                      ],
-                    ),
+
+                                });
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20,right: 20),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color:code!=null?AppColor:Colors.grey[400]
+                                ),
+                                child: Center(
+                                    child: isLoading ? Text('تاكيد',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ) : CircularProgressIndicator(color: Colors.white)),
+                                height: 58,
+                                width: double.infinity,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
 
 
-                ),
+                    ],
+                  ),
+
+
               );
             },
         ),
@@ -546,13 +731,19 @@ Widget buildTextFiled(
       Function ontap,
       String valid,
       Function onSaved,
+      Function onEditingComplete,
       TextInputType keyboardType}) {
   return TextFormField(
+    onEditingComplete:onEditingComplete,
     keyboardType: keyboardType,
     onSaved: onSaved,
     validator: (value) {
+      RegExp arabicRegex = RegExp(r'[\u0600-\u06FF]');
       if (value == null || value.isEmpty) {
         return '${valid} لا يجب أن تكون فارغة ';
+      }
+      if(arabicRegex.hasMatch(value)){
+        return 'الرجاء إدخال ${hintText} بالفرنسية';
       }
       return null;
     },

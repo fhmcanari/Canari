@@ -53,11 +53,11 @@ class _SelectLocationState extends State<SelectLocation> {
     }
     return true;
   }
+
   Future<Position> getLocation() async {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low).then((value) {
       latitude = value.latitude;
       longitude = value.longitude;
-      myLocation = 'موقعي الحالي';
       ismylocation =true;
       // lat = value.latitude;
       // lag = value.longitude;
@@ -69,6 +69,7 @@ class _SelectLocationState extends State<SelectLocation> {
 
     return position;
   }
+
   Future<void> _getCurrentPosition() async{
     final hasPermission = await _handleLocationPermission();
     if (!hasPermission) return;
@@ -77,7 +78,7 @@ class _SelectLocationState extends State<SelectLocation> {
          latitude = position.latitude;
          longitude =position.longitude;
          locationCollected = true;
-         myLocation = 'موقعي الحالي';
+
          _animateCamera(position);
       setState(() => currentPosition = position);
     }).catchError((e) {
@@ -94,17 +95,18 @@ class _SelectLocationState extends State<SelectLocation> {
     controller.animateCamera(CameraUpdate.newCameraPosition(_cameraPosition));
    }
 
-  Future getPlace({latitude,longitude})async{
+  Future getPlace({latitude,longitude,bool myaddres})async{
+    print(myaddres);
     List placemarks = await placemarkFromCoordinates(latitude,longitude);
-         myLocation =ismylocation?'موقعي الحالي': placemarks[0].street;
+         myLocation = placemarks[0].street;
          setState(() {
+
          });
   }
 
   Set<Marker>myMarkers={
    Marker(
-       draggable: true,
-      onDragEnd: (LatLng latLng){},
+
       markerId: MarkerId('1'),
       position:LatLng(27.149890, -13.199970),
    )
@@ -123,28 +125,13 @@ class _SelectLocationState extends State<SelectLocation> {
 
 
 
-    // void getSuggestion(String input)async{
-    //   String KPLACES_API_KEY = "AIzaSyCXgGsPTHMZ9PJ6nt-3bcAaqdGCyCrFDzE";
-    //   String baseURL = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
-    //   String request = "$baseURL?input=$input&key=$KPLACES_API_KEY&sessiontoken=$sessionToken";
-    //
-    //   var response = await http.get(Uri.parse(request));
-    //   print(response.body.toString());
-    //    if(response.statusCode == 200){
-    //    setState(() {
-    //      placesList = jsonDecode(response.body.toString()) ['predictions'];
-    //    });
-    //    }else{
-    //      throw Exception('Failed to load data');
-    //    }
-    // }
+
 
 
 
 
   @override
   void initState(){
-
     _handleLocationPermission();
      getPlace(latitude:27.149890 ,longitude:-13.199970,);
      latitude = 27.149890;
@@ -152,7 +139,7 @@ class _SelectLocationState extends State<SelectLocation> {
     super.initState();
   }
   @override
-  
+
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -263,33 +250,11 @@ class _SelectLocationState extends State<SelectLocation> {
                       _controller.complete(controller);
 
                     },
-
-                    onTap: (LatLng latLng)async{
-                      // myMarkers.remove(Marker(markerId: MarkerId('1')));
-                      // myMarkers.add(Marker(markerId: MarkerId('1'),position: latLng));
-                      // setState(() {
-                      //   latitude  =  latLng.latitude;
-                      //   longitude = latLng.longitude;
-                      //   getPlace(latitude:latitude,longitude:longitude);
-                      //   showModalBottomSheet(
-                      //     isScrollControlled: false,
-                      //     context: context, builder: (context){
-                      //     return showButton(myLocation: myLocation,latitude: latitude,longitude: longitude,);
-                      //   });
-
-                      // });
-                    },
                     onCameraMove: (CameraPosition position){
-                      print(position.target.latitude);
                       myMarkers.remove(Marker(markerId: MarkerId('1')));
                       myMarkers.add(Marker(markerId: MarkerId('1'),position: LatLng(position.target.latitude, position.target.longitude)));
                       latitude =position.target.latitude;
                       longitude= position.target.longitude;
-                      // showModalBottomSheet(
-                      //     isScrollControlled: false,
-                      //     context: context, builder: (context){
-                      //     return showButton(myLocation: myLocation,latitude: latitude,longitude: longitude,);
-                      //   });
                       setState((){
                       });
                     },

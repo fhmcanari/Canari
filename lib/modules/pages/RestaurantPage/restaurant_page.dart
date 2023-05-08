@@ -13,6 +13,8 @@ import '../../../Layout/HomeLayout/selectLocation.dart';
 import '../../../shared/components/constants.dart';
 import '../../../shared/network/remote/cachehelper.dart';
 import '../product_detail.dart';
+import 'package:flutter_share/flutter_share.dart';
+import 'dart:io' show Platform;
 
 const productHeight = 110.0;
 
@@ -86,6 +88,23 @@ class RestaurantPage extends StatefulWidget {
 
     @override
     Widget build(BuildContext context) {
+      Future<void> share() async {
+        if (Platform.isAndroid) {
+          await FlutterShare.share(
+            title: 'Canari food and More',
+            text: 'مرحباً ، لقد وجدت هذا المطعم ${widget.name} في كناري. الطعام يبدو جيدًا! إلق نظرة',
+            linkUrl: 'https://play.google.com/store/apps/details?id=com.canari.app',
+          );
+        } else if (Platform.isIOS) {
+          await FlutterShare.share(
+            title: 'Canari food and More',
+            text: 'مرحباً ، لقد وجدت هذا المطعم ${widget.name} في كناري. الطعام يبدو جيدًا! إلق نظرة',
+            linkUrl: 'https://apps.apple.com/ma/app/canari-food-delivery/id6448685108',
+          );
+        }
+
+      }
+
       String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
       double latitud = Cachehelper.getData(key: "latitude");
       String MyLocation = Cachehelper.getData(key: "myLocation");
@@ -197,10 +216,9 @@ class RestaurantPage extends StatefulWidget {
                                   });
                                 } else {
                                   if (latitud != null) {
-                                    print(cubit.store['delivery_price']);
                                     var totalPrice = await navigateTo(
                                         context,CheckoutPage(
-                                      delivery_price: widget.price_delivery,
+                                        delivery_price: widget.price_delivery,
                                     ));
                                     setState(() {
                                       totalPrice = price;
@@ -352,22 +370,80 @@ class RestaurantPage extends StatefulWidget {
                                   : height(0),
                             ],
                           )),
-                          leading: Padding(
-                            padding: EdgeInsets.only(left: 16, right: 5),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context, '${cubit.getTotalPrice()}');
-                                setState(() {
-
-                                });
-                              },
-                              child: CircleAvatar(
-                                  child: Icon(Icons.arrow_back,
-                                      color: Colors.black, size: 26),
-                                  backgroundColor: Colors.white,
-                                  minRadius: 22),
+                          actions: [
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  width: 28,
+                                  height: 28,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        spreadRadius: 2,
+                                        blurRadius: 5,
+                                        offset: Offset(3, 3),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 16, right: 5),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                    share();
+                                    },
+                                    child: CircleAvatar(
+                                        child: Icon(Icons.share,
+                                            color: Colors.black, size: 24),
+                                        backgroundColor: Colors.white,
+                                        minRadius: 20),
+                                  ),
+                                ),
+                              ],
                             ),
+                          ],
+                          leading:
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: Offset(3, 3),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 16, right: 5),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context, '${cubit.getTotalPrice()}');
+                                    setState(() {
+
+                                    });
+                                  },
+                                  child: CircleAvatar(
+                                      child: Icon(Icons.arrow_back,
+                                          color: Colors.black, size: 26),
+                                      backgroundColor: Colors.white,
+                                      minRadius: 22),
+                                ),
+                              ),
+                            ],
                           ),
+
+
                         ),
                         ResturantInfo(widget: widget, cubit: cubit),
                         SliverPersistentHeader(

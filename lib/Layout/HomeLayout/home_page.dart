@@ -92,7 +92,6 @@ class _MyHomePageState extends State<MyHomePage> {
    @override
   void initState(){
      FirebaseMessaging.instance.getInitialMessage();
-
      getPostion();
      _handleLocationPermission();
      fbm.getToken().then((token){
@@ -381,6 +380,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         )
+
                       ],
                     ),
                     height(10),
@@ -388,6 +388,7 @@ class _MyHomePageState extends State<MyHomePage> {
                      children: [
                        islist==false?
                        ListView.separated(
+
                            separatorBuilder: (context, index){
                              return Divider(
                                height: 2,

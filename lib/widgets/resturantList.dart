@@ -22,7 +22,6 @@ class ResturantList extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => RestaurantPage(
-
                           name: Restaurant['name'],
                           slug:  Restaurant['slug'],
                           cover: Restaurant['cover'],
@@ -80,7 +79,7 @@ class ResturantList extends StatelessWidget {
                  child: Text(
                    '${Restaurant['name']}',
                     style:TextStyle(
-                       fontWeight: FontWeight.normal,
+                       fontWeight: FontWeight.bold,
                        color: Color(0xFF000000),
                        fontSize: 15),
                  ),
