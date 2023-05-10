@@ -36,27 +36,21 @@ class _ServiceOffState extends State<ServiceOff> {
                ),
              ),
 
-              Padding(padding: EdgeInsets.only(left: 22,right: 22,top: 50),
-              child: SizedBox(
-                height: 55.0,
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(AppColor), // set the background color of the button to red
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context)=>
-                            MyHomePage(
-                              latitude: latitude,
-                              longitude: longitude,
-                              myLocation: myLocation,
-                            )), (route) => false);
-                  },
-                  child: Text('تصفح تطبيق'),
-                ),
-              ),
-              )
+              // Padding(padding: EdgeInsets.only(left: 22,right: 22,top: 50),
+              // child: SizedBox(
+              //   height: 55.0,
+              //   width: double.infinity,
+              //   child: ElevatedButton(
+              //     style: ButtonStyle(
+              //       backgroundColor: MaterialStateProperty.all<Color>(AppColor), // set the background color of the button to red
+              //     ),
+              //     onPressed: () {
+              //
+              //     },
+              //     child: Text('تصفح تطبيق'),
+              //   ),
+              // ),
+              // )
             ],
           ),
         )

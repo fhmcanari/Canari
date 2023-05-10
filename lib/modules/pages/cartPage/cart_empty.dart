@@ -20,9 +20,9 @@ class _CartemptyState extends State<Cartempty> {
 
          Text('عربة التسوق فارغة',style: TextStyle(color:Color(0xFF6b7280),fontSize: 26,fontWeight: FontWeight.bold),),
             height(20),
-            Center(
-              child: Image.network('https://canariapp.com/_nuxt/img/empty-cart.761fc5a.png'),
-            ),
+            // Center(
+            //   child: Image.network('https://canariapp.com/_nuxt/img/empty-cart.761fc5a.png'),
+            // ),
 
           SizedBox(height: 20,),
           GestureDetector(

@@ -14,7 +14,9 @@ import 'cartPage/cart_empty.dart';
 
 class CheckoutPage extends StatefulWidget {
   final delivery_price;
-  const CheckoutPage({Key key, this.delivery_price}) : super(key: key);
+
+
+  const CheckoutPage({Key key, this.delivery_price,}) : super(key: key);
 
   @override
   _CheckoutPageState createState() => _CheckoutPageState();
@@ -43,9 +45,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
     double latitud = Cachehelper.getData(key: "latitude");
     double longitud = Cachehelper.getData(key: "longitude");
     String MyLocation = Cachehelper.getData(key: "myLocation");
-
     String access_token = Cachehelper.getData(key: "token");
-    print(access_token);
+
+
+
     animateCamera(latitude,longitude);
     Set<Marker>myMarkers={
       Marker(
@@ -66,7 +69,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
            }
           },
           builder: (context,state){
-            print(type);
+            print(dataService.itemsCart);
             var cubit = ShopCubit.get(context);
             String device_id = Cachehelper.getData(key:"deviceId");
             return Scaffold(

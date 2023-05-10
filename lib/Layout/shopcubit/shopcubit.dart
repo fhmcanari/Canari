@@ -146,7 +146,7 @@ class ShopCubit extends Cubit<ShopStates> {
         var cantainStore = dataService.itemsCart.where((element) => element['productStoreId']==productStoreId).toList();
         if(cantainStore.isNotEmpty){
           var containProduct = dataService.itemsCart.where((element) => element['id']==product['id']).toList();
-          if(containProduct.isEmpty) {
+          if(containProduct.isEmpty){
             dataService.itemsCart.add({
               "storeStats":storeStats,
               "productStoreId": productStoreId,

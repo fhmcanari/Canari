@@ -7,6 +7,7 @@ import 'package:shopapp/modules/pages/order.dart';
 import 'package:intl/intl.dart';
 import 'package:shopapp/shared/components/constants.dart';
 import 'dart:ui' as ui;
+import '../../Layout/HomeLayout/selectLocation.dart';
 import '../../Layout/shopcubit/shopcubit.dart';
 import '../../shared/components/components.dart';
 import '../../shared/network/remote/cachehelper.dart';
@@ -33,7 +34,6 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen((message){
       if (message.notification!=null) {
-        printFullText(message.notification.body);
       }
 
 
@@ -79,7 +79,7 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
                   shrinkWrap: true,
                   itemCount: cubit.myorders.length,
                   itemBuilder: (context,index){
-
+                    printFullText(cubit.myorders[index]['delivery_address']['longitude'].toString());
                 return Directionality(
                   textDirection: ui.TextDirection.rtl,
                   child: Padding(
@@ -140,6 +140,7 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
                                     ),
                                     height(5),
                                     ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
                                       itemCount:cubit.myorders[index]['products'].length,
                                         shrinkWrap: true,
                                         itemBuilder: (context,prodIndex){
@@ -176,12 +177,63 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
                                           color: Colors.grey[500],
                                         ),),
 
-                                        cubit.myorders[index]['status']=='delivered'? height(0):Text(status(cubit.myorders[index]['status']),style: TextStyle(
+                                        cubit.myorders[index]['status']=='delivered'?height(0):Text(status(cubit.myorders[index]['status']),style: TextStyle(
                                           fontWeight: FontWeight.w700,
                                           fontSize: 13,
                                           color: Color(0xff10a37f),
                                         ),),
-                                       
+                                        if(cubit.myorders[index]['status']=='delivered')
+                                        TextButton(
+                                            style: ButtonStyle(
+                                              elevation: MaterialStateProperty.all<double>(4.0),
+                                              shadowColor: MaterialStateProperty.all<Color>(Colors.grey[200]),
+                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(7.0),
+                                                ),
+                                              ),
+                                              backgroundColor: MaterialStateProperty.all<Color>(AppColor),
+                                            ),
+                                            onPressed: ()async{
+                                              StoreName = cubit.myorders[index]['store']['name'];
+                                              StoreId = cubit.myorders[index]['store']['id'];
+                                              deliveryPrice = cubit.myorders[index]['store']['delivery_price'];
+                                              dataService.itemsCart = cubit.myorders[index]['products'];
+
+                                              for (var i = 0; i < cubit.myorders[index]['products'].length; i++) {
+                                                cubit.myorders[index]['products'][i]['productStoreId'] = StoreId;
+                                                printFullText(cubit.myorders[index].toString());
+                                                cubit.myorders[index]['products'][i]['latitud']=cubit.myorders[index]['delivery_address']['latitude'];
+                                                cubit.myorders[index]['products'][i]['longitud']=cubit.myorders[index]['delivery_address']['longitude'];
+                                                cubit.myorders[index]['products'][i]['MyLocation']=cubit.myorders[index]['delivery_address']['label'];
+                                              }
+
+                                              StoreName = cubit.myorders[index]['store']['name'];
+                                              StoreId = cubit.myorders[index]['store']['id'];
+                                              deliveryPrice = cubit.myorders[index]['store']['delivery_price'];
+                                              dataService.itemsCart = cubit.myorders[index]['products'];
+                                              for (var i = 0; i < cubit.myorders[index]['products'].length; i++) {
+                                                cubit.myorders[index]['products'][i]['productStoreId'] = StoreId;
+                                              }
+                                              if(myLocation==null){
+                                                final changeAdress = await navigateTo(context, SelectLocation(routing: 'checkout',));
+                                                setState(() {
+                                                  if(changeAdress!=null){
+                                                    myLocation = changeAdress;
+                                                  }
+                                                  print(changeAdress);
+                                                });
+                                              }
+                                              navigateTo(context,CheckoutPage(
+                                                delivery_price: deliveryPrice,
+                                              ));
+
+                                            }, child: Text('اعادة طلب',style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 12
+                                        ),)
+                                        )
 
 
 

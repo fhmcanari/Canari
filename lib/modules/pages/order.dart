@@ -459,6 +459,7 @@ FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
+
                                         Text('الوصول المتوقع',style: TextStyle(fontSize: 15),),
                                         height(10),
                                         widget.order['data']['prospective_fulfillment_time']!=''?
@@ -830,10 +831,7 @@ FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             mainAxisAlignment: MainAxisAlignment.start,
                                                             children: [
-
                                                               Text('${widget.order['data']['products'][index]['name']}',style: TextStyle(fontSize: 15.5,fontWeight: FontWeight.bold),),
-
-
                                                               Text(
                                                                 '',
                                                                 maxLines: 2,

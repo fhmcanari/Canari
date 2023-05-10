@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mac_address/mac_address.dart';
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,12 +47,7 @@ class _RegisterState extends State<Register> {
   String _platformVersion = 'Unknown';
   Future<void> initformState() async {
     String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await GetMac.macAddress;
-    } on PlatformException {
-      platformVersion = 'Failed to get Device MAC Address.';
-    }
+
 
     if (!mounted) return;
 
