@@ -9,6 +9,8 @@ import 'package:shopapp/shared/components/constants.dart';
 import 'dart:ui' as ui;
 import '../../Layout/shopcubit/shopcubit.dart';
 import '../../shared/components/components.dart';
+import '../../shared/network/remote/cachehelper.dart';
+import 'checkout_page.dart';
 class Myorder extends StatefulWidget {
   const Myorder({Key key}) : super(key: key);
 
@@ -47,6 +49,7 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
            }
           },
           builder: (context,state){
+            String device_id = Cachehelper.getData(key:"deviceId");
             var cubit = ShopCubit.get(context);
             return Scaffold(
               backgroundColor: Colors.white,
@@ -82,14 +85,15 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
-                      height: 100,
                       child: InkWell(
+                        radius: 10,
+                        borderRadius:BorderRadius.circular(5),
                         onTap: () async {
                           cubit.Myorder(cubit.myorders[index]['order_ref']);
                           cubit.isloading = false;
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 10,right: 10),
+                          padding: const EdgeInsets.only(left: 10,right: 10,),
                           child: Row(
                             children: [
                               Container(
@@ -103,7 +107,7 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
                                     child:CachedNetworkImage(
                                         imageUrl: '${cubit.myorders[index]['store']['logo']}',
                                         placeholder: (context, url) =>
-                                            Image.network('https://www.happyeater.com/images/default-food-image.jpg',fit: BoxFit.cover),
+                                  Image.asset('assets/placeholder.png',fit: BoxFit.cover,),
                                         errorWidget: (context, url, error) => const Icon(Icons.error),
                                         imageBuilder: (context, imageProvider){
                                           return Container(
@@ -125,49 +129,59 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('#${cubit.myorders[index]['order_ref']}',style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xff8d8d8d),
-                                            fontSize: 12
-                                          ),),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(3),
-                                              color: Color(0xffecfdf5),
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text('${cubit.myorders[index]['status']}',style: TextStyle(color: Color(0xFF34d399),
-                                                fontSize: 12,fontWeight: FontWeight.bold,),),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    height(5),
+
+                                    height(15),
                                     Text(
                                       '${cubit.myorders[index]['store']['name']}',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.normal,
+                                          fontWeight: FontWeight.bold,
                                           color: Color(0xFF000000),
-                                          fontSize: 15),
+                                          fontSize: 15.5),
                                     ),
                                     height(5),
+                                    ListView.builder(
+                                      itemCount:cubit.myorders[index]['products'].length,
+                                        shrinkWrap: true,
+                                        itemBuilder: (context,prodIndex){
+                                      return Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 2),
+                                            child: Text('x${cubit.myorders[index]['products'][prodIndex]['quantity']}',style:TextStyle(fontSize: 13.5,fontWeight: FontWeight.w300,color:Colors.grey),),
+                                          ),
+                                          width(10),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                Text('${cubit.myorders[index]['products'][prodIndex]['name']}',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w300,color:Colors.grey),),
+                                              ],
+                                            ),
+                                          ),
+                                          width(15),
+
+                                        ],
+                                      );
+                                    }),
+                                    height(8),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('${DateFormat('dd/MM/yyyy').format(DateTime.parse(cubit.myorders[index]['created_at']))}'),
-                                        Text("${cubit.myorders[index]['total']} درهم ",style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color:Color(0xff696b6e),
-                                            fontSize:11.8
+                                        Text('${cubit.myorders[index]['total']} درهم',style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 14,
+                                          color: Colors.grey[500],
                                         ),),
 
+                                        cubit.myorders[index]['status']=='delivered'? height(0):Text(status(cubit.myorders[index]['status']),style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 13,
+                                          color: Color(0xff10a37f),
+                                        ),),
+                                       
 
 
 
@@ -196,7 +210,7 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 15,right: 15,top: 20),
-                    child: Text('ليس لديك أي طلبات حتى الآن. جرب أحد مطاعمنا الرائعة ',style: TextStyle(color:Color(0xFF6b7280),fontSize: 16,fontWeight: FontWeight.w500,),textAlign: TextAlign.center,),
+                    child: Text('ليس لديك أي طلبات حتى الآن. جرب أحد مطاعمنا الرائعة',style: TextStyle(color:Color(0xFF6b7280),fontSize: 16,fontWeight: FontWeight.w500,),textAlign: TextAlign.center,),
                   ),
                   height(50),
 
@@ -218,18 +232,31 @@ class _MyorderState extends State<Myorder> with TickerProviderStateMixin{
 
     );
   }
+  status(String status) {
+    if (status == 'pending') {
+      return 'قيد الانتظار';
+    }
+    if (status == 'confirmation on process') {
+      return 'جاري التأكيد';
+    }
+    if(status == 'on process'){
+      return 'المطعم يحضر طلبك';
+    }
+    if(status == 'ready'){
+      return 'طلبك جاهز للاستلام الآن';
+    }
+    if(status == 'delivery process'){
+      return 'جاري توصيل طلبك';
+    }
+    if(status == 'delivered'){
+      return 'تم توصيل طلبيتك';
+    }
+    if(status == 'non-accepted'){
+      return 'تم رفض طلبيتك';
+    }else{
+      return 'تم إلغاء طلبيتك';
+    }
 
-  double getTotal(List products) {
-    var total = 0.0;
-    products.forEach((element){
-      // print(element);
-       total = total + double.parse(element['price']) * element['quantity'];
-      for(var i = 0 ;i<element['attributes'].length;i++){
-        total = total + double.parse(element['attributes'][i]['price']);
-      }
-
-    });
-
-    return total + 5;
   }
+
 }
